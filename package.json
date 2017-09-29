@@ -8,6 +8,25 @@
     "build": "bin/index.js"
   },
   "dependencies": {
-    "commander": "^2.11.0"
+    "babel-cli": "latest",
+    "babel-eslint": "latest",
+    "babel-plugin-external-helpers": "latest",
+    "babel-plugin-transform-class-properties": "latest",
+    "babel-plugin-transform-object-rest-spread": "latest",
+    "babel-preset-env": "latest",
+    "browser-sync": "latest",
+    "commander": "^2.11.0",
+    "gulp": "latest",
+    "gulp-clean-css": "latest",
+    "gulp-less": "latest",
+    "gulp-sourcemaps": "latest",
+    "less-plugin-autoprefix": "latest",
+    "rollup": "latest",
+    "rollup-plugin-babel": "latest",
+    "rollup-plugin-commonjs": "latest",
+    "rollup-plugin-eslint": "^4.0.0",
+    "rollup-plugin-node-resolve": "latest",
+    "rollup-plugin-uglify": "latest",
+    "uglify-js": "latest"
   }
 }
