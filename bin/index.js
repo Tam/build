@@ -75,7 +75,7 @@ let config = {
 };
 
 try {
-	let customConfig = JSON.parse(fs.readFileSync(getPath(targetDir)));
+	let customConfig = JSON.parse(fs.readFileSync(getPath(".buildrc")));
 	
 	// Merge shallow for each config group (i.e. less, js, etc.)
 	const keys = Object.keys(config);
@@ -93,8 +93,9 @@ const reload = () => {
 	if (!config.browserSync.ignore)
 		browserSync.reload();
 };
-	
+
 gulp.task("less", function () {
+	console.time("Less");
 	gulp.src(getPath(config.less.input))
 	    .pipe(sourcemaps.init())
 	    .pipe(less({
@@ -104,9 +105,11 @@ gulp.task("less", function () {
 	    .pipe(sourcemaps.write("."))
 	    .pipe(gulp.dest(getPath(config.less.output)))
 	    .on("end", reload);
+	console.timeEnd("Less");
 });
 
 gulp.task("js", function () {
+	console.time("JS");
 	rollup({
 		input: getPath(config.js.input),
 		plugins: [
@@ -165,7 +168,8 @@ gulp.task("js", function () {
 			file: getPath(config.js.output)
 		});
 		reload();
-	}).catch(function(err) { console.error(err); });
+	}).catch(function(err) { /*console.error(err);*/ });
+	console.timeEnd("JS");
 });
 
 
@@ -180,18 +184,6 @@ gulp.task("watch", function () {
 		gulp.watch(config.browserSync.watch.map(getPath)).on("change", reload);
 });
 
-const w = [];
-if (program.watch) w.push("watch");
-
-gulp.task("default", w, function () {
-	if (!config.browserSync.ignore) {
-		browserSync.init({
-			open: false,
-			proxy: config.browserSync.proxy
-		});
-	}
-});
-
 if (program.less) {
 	gulp.start("less");
 	return;
@@ -202,5 +194,12 @@ if (program.js) {
 	return;
 }
 
+if (!config.browserSync.ignore) {
+	browserSync.init({
+		open: false,
+		proxy: config.browserSync.proxy
+	});
+}
+
 // TODO: `start` will be replaced in favour of `series` and `parallel` in Gulp 4
-gulp.start("default");
+gulp.start("watch");
