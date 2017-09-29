@@ -1,0 +1,6 @@
+{
+  "browserSync": {
+    "proxy": "example.dev",
+    "watch": ["hi"]
+  }
+}

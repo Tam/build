@@ -1,0 +1,13 @@
+{
+  "name": "build",
+  "version": "0.0.1",
+  "description": "A self contained build system for websites",
+  "author": "Tam <hi@tam.sx>",
+  "license": "MIT",
+  "bin": {
+    "build": "bin/index.js"
+  },
+  "dependencies": {
+    "commander": "^2.11.0"
+  }
+}
