@@ -10,7 +10,13 @@ const fs = require("fs")
 const targetDir = process.cwd()
 	, version = require("../package.json").version;
 
-const getPath = file => path.join(targetDir, file);
+const getPath = file => {
+	let bang = file[0] === "!";
+	
+	if (bang) file = file.slice(1, file.length);
+	
+	return (bang ? "!" : "") + path.join(targetDir, file);
+};
 
 // Variables: Gulp
 // -------------------------------------------------------------------------
@@ -40,20 +46,7 @@ program
 	.version(version)
 	.option("--less", "Compile less only")
 	.option("--js", "Compile JS only")
-	.option("--no-watch", "Don't watch, will compile then exit")
 	.parse(process.argv);
-
-if (!program.watch) {
-	// TODO: Don't watch
-}
-
-if (program.less) {
-	// TODO: Build less only
-}
-
-if (program.js) {
-	// TODO: Build JS only
-}
 
 // Config
 // =========================================================================
@@ -100,95 +93,91 @@ const reload = () => {
 	if (!config.browserSync.ignore)
 		browserSync.reload();
 };
+	
+gulp.task("less", function () {
+	gulp.src(getPath(config.less.input))
+	    .pipe(sourcemaps.init())
+	    .pipe(less({
+		    plugins: [autoprefixer]
+	    }).on("error", function(err){ console.log(err.message); }))
+	    .pipe(cleanCss())
+	    .pipe(sourcemaps.write("."))
+	    .pipe(gulp.dest(getPath(config.less.output)))
+	    .on("end", reload);
+});
 
-if (!config.less.ignore) {
-	
-	gulp.task("less", function () {
-		gulp.src(getPath(config.less.input))
-		    .pipe(sourcemaps.init())
-		    .pipe(less({
-			    plugins: [autoprefixer]
-		    }).on("error", function(err){ console.log(err.message); }))
-		    .pipe(cleanCss())
-		    .pipe(sourcemaps.write("."))
-		    .pipe(gulp.dest(getPath(config.less.output)))
-		    .on("end", reload);
-	});
-	
-}
-
-if (!config.js.ignore) {
-	
-	gulp.task("js", function () {
-		rollup({
-			input: getPath(config.js.input),
-			plugins: [
-				eslint({
-					useEslintrc: false,
-					baseConfig: {
-						parserOptions: {
-							ecmaVersion: 7,
-							sourceType: "module"
+gulp.task("js", function () {
+	rollup({
+		input: getPath(config.js.input),
+		plugins: [
+			eslint({
+				useEslintrc: false,
+				baseConfig: {
+					parserOptions: {
+						ecmaVersion: 7,
+						sourceType: "module"
+					},
+					extends: "eslint:recommended",
+				},
+				parser: "babel-eslint",
+				rules: {
+					eqeqeq: [1, "smart"],
+					semi: [1, "always"],
+					"no-loop-func": [2],
+					"no-console": [1],
+					"no-mixed-spaces-and-tabs": [0],
+				},
+				envs: ["browser", "es6"]
+			}),
+			nodeResolve({
+				module: true,
+				jsnext: true,
+				main: true,
+				browser: true
+			}),
+			commonjs(),
+			babel({
+				"presets": [
+					["env", {
+						"targets": {
+							"browsers": [
+								"last 2 versions",
+								"safari >= 7",
+								"ie >= 10"
+							]
 						},
-						extends: "eslint:recommended",
-					},
-					parser: "babel-eslint",
-					rules: {
-						eqeqeq: [1, "smart"],
-						semi: [1, "always"],
-						"no-loop-func": [2],
-						"no-console": [1],
-						"no-mixed-spaces-and-tabs": [0],
-					},
-					envs: ["browser", "es6"]
-				}),
-				nodeResolve({
-					module: true,
-					jsnext: true,
-					main: true,
-					browser: true
-				}),
-				commonjs(),
-				babel({
-					"presets": [
-						["env", {
-							"targets": {
-								"browsers": [
-									"last 2 versions",
-									"safari >= 7",
-									"ie >= 10"
-								]
-							},
-							"modules": false
-						}]
-					],
-					"plugins": [
-						"external-helpers",
-						"transform-class-properties",
-						"transform-object-rest-spread"
-					]
-				}),
-				uglify({}, minify)
-			],
-			sourcemap: true
-		}).then(function (bundle) {
-			bundle.write({
-				format: "es",
-				sourcemap: true,
-				file: getPath(config.js.output)
-			});
-			reload();
-		}).catch(function(err) { console.error(err); });
-	});
+						"modules": false
+					}]
+				],
+				"plugins": [
+					"external-helpers",
+					"transform-class-properties",
+					"transform-object-rest-spread"
+				]
+			}),
+			uglify({}, minify)
+		],
+		sourcemap: true
+	}).then(function (bundle) {
+		bundle.write({
+			format: "es",
+			sourcemap: true,
+			file: getPath(config.js.output)
+		});
+		reload();
+	}).catch(function(err) { console.error(err); });
+});
+
+
+gulp.task("watch", function () {
+	if (!config.js.ignore)
+		gulp.watch(config.js.watch.map(getPath), ["js"]);
 	
-}
-
-
-gulp.task('watch', function () {
-	// TODO: Wrap in getPath, accounting for !
-	gulp.watch(["public/assets/js/**/*.js", "!public/assets/js/**/*.min.js"], ["js"]);
-	gulp.watch(["public/assets/less/**/*"], ["less"]);
-	gulp.watch("craft/templates/**/*").on("change", reload);
+	if (!config.less.ignore)
+		gulp.watch(config.less.watch.map(getPath), ["less"]);
+	
+	if (!config.browserSync.ignore)
+		gulp.watch(config.browserSync.watch.map(getPath)).on("change", reload);
 });
 
 const w = [];
@@ -203,4 +192,15 @@ gulp.task("default", w, function () {
 	}
 });
 
-// TODO: Run gulp with the above config...
+if (program.less) {
+	gulp.start("less");
+	return;
+}
+
+if (program.js) {
+	gulp.start("js");
+	return;
+}
+
+// TODO: `start` will be replaced in favour of `series` and `parallel` in Gulp 4
+gulp.start("default");

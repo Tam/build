@@ -4,6 +4,7 @@
   "description": "A self contained build system for websites",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
+  "respository": "https://github.com/tam/build",
   "bin": {
     "build": "bin/index.js"
   },
