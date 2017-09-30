@@ -150,6 +150,18 @@ const reload = () => {
 		browserSync.reload();
 };
 
+/**
+ * Tell Babel to look in builds node_modules, not the node_modules folder of the
+ * directory build is running in
+ *
+ * @param name
+ * @param type
+ * @returns {string}
+ */
+function babelPath (name, type = "plugin") {
+	return __dirname + "/../node_modules/babel-" + type + "-" + name;
+}
+
 gulp.task("less", function () {
 	gulp.src(getPath(config.less.input))
 	    .pipe(sourcemaps.init())
@@ -194,7 +206,7 @@ gulp.task("js", function () {
 			commonjs(),
 			babel({
 				"presets": [
-					["env", {
+					[babelPath("env", "preset"), {
 						"targets": {
 							"browsers": [
 								"last 2 versions",
@@ -206,9 +218,9 @@ gulp.task("js", function () {
 					}]
 				],
 				"plugins": [
-					"external-helpers",
-					"transform-class-properties",
-					"transform-object-rest-spread"
+					babelPath("external-helpers"),
+					babelPath("transform-class-properties"),
+					babelPath("transform-object-rest-spread"),
 				]
 			}),
 			uglify({}, minify)
@@ -221,7 +233,7 @@ gulp.task("js", function () {
 			file: getPath(config.js.output)
 		});
 		reload();
-	}).catch(function(err) { /*console.error(err);*/ });
+	}).catch(function(err) { console.error(err); });
 });
 
 
