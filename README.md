@@ -7,7 +7,7 @@ An opinionated build system for LESS & ES6
 
 ## Config
 Create a `.buildrc` file to configure 
-(all parameters are optional, below are the defaults):
+(all parameters are optional, below are the defaults. Tell your editor to treat as JSON):
 
 ```json
 {
@@ -56,6 +56,10 @@ with `!` will ignore that file, `*` are wildcards.
 - Fixes CommonJS shit
 - Opinionated Babel ES6 -> ES5 compile
 - Uglifies & Minifies
+
+### BrowserSync
+- Reloads the browser (at `proxy:3000`) whenever any file in `watch` changes 
+(this includes the JS & LESS `watch`es) 
 
 ## TODO
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
