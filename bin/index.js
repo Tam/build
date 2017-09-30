@@ -5,7 +5,9 @@
 
 const fs = require("fs")
 	, path = require("path")
-	, program = require("commander");
+	, program = require("commander")
+	, chalk = require("chalk")
+	, prettyTime = require("pretty-hrtime");
 
 const targetDir = process.cwd()
 	, version = require("../package.json").version;
@@ -86,6 +88,60 @@ try {
 	// Eh
 }
 
+// Log
+// =========================================================================
+
+// Format orchestrator errors
+function formatError(e) {
+	if (!e.err) {
+		return e.message;
+	}
+	
+	// PluginError
+	if (typeof e.err.showStack === 'boolean') {
+		return e.err.toString();
+	}
+	
+	// Normal error
+	if (e.err.stack) {
+		return e.err.stack;
+	}
+	
+	// Unknown (string, number, etc.)
+	return new Error(String(e.err)).stack;
+}
+
+gulp.on('task_start', function(e) {
+	console.log('Starting', '\'' + chalk.cyan(e.task) + '\'...');
+});
+
+gulp.on('task_stop', function(e) {
+	const time = prettyTime(e.hrDuration);
+	console.log(
+		'Finished', '\'' + chalk.cyan(e.task) + '\'',
+		'after', chalk.magenta(time)
+	);
+});
+
+gulp.on('task_err', function(e) {
+	const msg = formatError(e);
+	const time = prettyTime(e.hrDuration);
+	console.log(
+		'\'' + chalk.cyan(e.task) + '\'',
+		chalk.red('errored after'),
+		chalk.magenta(time)
+	);
+	console.log(msg);
+});
+
+gulp.on('task_not_found', function(err) {
+	console.log(
+		chalk.red('Task \'' + err.task + '\' is not in your gulpfile')
+	);
+	console.log('Please check the documentation for proper gulpfile formatting');
+	process.exit(1);
+});
+
 // Build
 // =========================================================================
 
@@ -95,7 +151,6 @@ const reload = () => {
 };
 
 gulp.task("less", function () {
-	console.time("Less");
 	gulp.src(getPath(config.less.input))
 	    .pipe(sourcemaps.init())
 	    .pipe(less({
@@ -105,11 +160,9 @@ gulp.task("less", function () {
 	    .pipe(sourcemaps.write("."))
 	    .pipe(gulp.dest(getPath(config.less.output)))
 	    .on("end", reload);
-	console.timeEnd("Less");
 });
 
 gulp.task("js", function () {
-	console.time("JS");
 	rollup({
 		input: getPath(config.js.input),
 		plugins: [
@@ -169,7 +222,6 @@ gulp.task("js", function () {
 		});
 		reload();
 	}).catch(function(err) { /*console.error(err);*/ });
-	console.timeEnd("JS");
 });
 
 
