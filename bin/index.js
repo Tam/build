@@ -233,7 +233,11 @@ gulp.task("js", function () {
 			file: getPath(config.js.output)
 		});
 		reload();
-	}).catch(function(err) { console.error(err); });
+	}).catch(function(err) {
+		// Ignore syntax errors, babel/rollup will output a nice error
+		if (err.constructor.name !== "SyntaxError")
+			console.error(err);
+	});
 });
 
 
