@@ -1,1 +1,64 @@
 # build
+An opinionated build system for LESS & ES6
+
+## Usage
+- To install run `npm i -g tam/build`
+- Run `build` in the directory you want build from
+
+## Config
+Create a `.buildrc` file to configure 
+(all parameters are optional, below are the defaults):
+
+```json
+{
+	"less": {
+		"ignore": false,
+		"input":  "public/assets/less/style.less",
+		"output": "public/assets/css",
+		"watch":  ["public/assets/less/**/*"]
+	},
+	"js": {
+		"ignore": false,
+		"input":  "public/assets/js/app.js",
+		"output": "public/assets/js/app.min.js",
+		"watch":  [
+			"public/assets/js/**/*.js",
+			"!public/assets/js/**/*.min.js"
+		]
+	},
+	"browserSync": {
+		"ignore": false,
+		"proxy": "LOCAL_URL.dev",
+		"watch": ["craft/templates/**/*"]
+	}
+}
+```
+
+URL's must be relative to the directory `build` is being run in. Prefixing a url
+with `!` will ignore that file, `*` are wildcards.
+
+## Commands
+- `build` - Starts the watcher & build process
+- `build --js` - Builds the JS once only
+- `build --less` - Builds the LESS once only
+
+## What it does
+### LESS
+- Autoprefixes for last 3 browser versions
+- Creates sourcemap
+- Complies to CSS
+- Minifies
+
+### JS
+- Opinionated ESLint
+- Creates sourcemap
+- Resolves node imports
+- Fixes CommonJS shit
+- Opinionated Babel ES6 -> ES5 compile
+- Uglifies & Minifies
+
+## TODO
+- [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
+- [ ] Move away from Gulp?
+- [ ] Add React support via webpack
+- [ ] Add check for newer versions of self and dependencies

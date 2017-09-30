@@ -46,8 +46,8 @@ const browserSync = require("browser-sync").create();
 
 program
 	.version(version)
-	.option("--less", "Compile less only")
-	.option("--js", "Compile JS only")
+	.option("--less", "Compile LESS once only")
+	.option("--js", "Compile JS once only")
 	.parse(process.argv);
 
 // Config
