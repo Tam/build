@@ -140,3 +140,5 @@ typings/
 .env
 
 
+### Custom
+.buildrc
