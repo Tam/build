@@ -46,7 +46,7 @@ const browserSync = require("browser-sync").create();
 // Updates
 // =========================================================================
 
-https.get("https://raw.githubusercontent.com/Tam/build/master/package.json", resp => {
+https.get("https://raw.githubusercontent.com/Tam/build/master/package.json?c=" + (new Date()), resp => {
 	let data = '';
 	
 	// A chunk of data has been recieved.
