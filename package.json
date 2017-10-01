@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A self contained build system for websites",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -18,18 +18,19 @@
     "browser-sync": "latest",
     "chalk": "latest",
     "commander": "latest",
+    "compare-versions": "latest",
     "gulp": "latest",
     "gulp-clean-css": "latest",
     "gulp-less": "latest",
     "gulp-sourcemaps": "latest",
     "less-plugin-autoprefix": "latest",
+    "pretty-hrtime": "latest",
     "rollup": "latest",
     "rollup-plugin-babel": "latest",
     "rollup-plugin-commonjs": "latest",
     "rollup-plugin-eslint": "latest",
     "rollup-plugin-node-resolve": "latest",
     "rollup-plugin-uglify": "latest",
-    "uglify-js": "latest",
-    "pretty-hrtime": "latest"
+    "uglify-js": "latest"
   }
 }

@@ -65,4 +65,4 @@ with `!` will ignore that file, `*` are wildcards.
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
 - [ ] Move away from Gulp?
 - [ ] Add React support via webpack
-- [ ] Add check for newer versions of self and dependencies
+- [ ] Add check for newer versions of ~~self and~~ dependencies

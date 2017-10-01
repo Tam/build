@@ -5,9 +5,11 @@
 
 const fs = require("fs")
 	, path = require("path")
+	, https = require("https")
 	, program = require("commander")
 	, chalk = require("chalk")
-	, prettyTime = require("pretty-hrtime");
+	, prettyTime = require("pretty-hrtime")
+	, compareVersions = require('compare-versions');
 
 const targetDir = process.cwd()
 	, version = require("../package.json").version;
@@ -20,7 +22,7 @@ const getPath = file => {
 	return (bang ? "!" : "") + path.join(targetDir, file);
 };
 
-// Variables: Gulp
+// Variables: Build
 // -------------------------------------------------------------------------
 
 const gulp = require("gulp")
@@ -40,6 +42,35 @@ const rollup = require("rollup").rollup
 	, minify = require("uglify-js").minify;
 
 const browserSync = require("browser-sync").create();
+
+// Updates
+// =========================================================================
+
+https.get("https://raw.githubusercontent.com/Tam/build/master/package.json", resp => {
+	let data = '';
+	
+	// A chunk of data has been recieved.
+	resp.on('data', (chunk) => {
+		data += chunk;
+	});
+	
+	// The whole response has been received. Print out the result.
+	resp.on('end', () => {
+		const newVersion = JSON.parse(data).version;
+		
+		if (compareVersions(newVersion, version) === 1) {
+			setTimeout(() => {
+				const g = chalk.green
+					, c = chalk.bold.cyan;
+				
+				console.log(g("╔══════════════════════════╗"));
+				console.log(g("║") + "  An update is available  " + g("║"));
+				console.log(g("║") + c("    npm i -g tam/build    ") + g("║"));
+				console.log(g("╚══════════════════════════╝"));
+			}, 1000);
+		}
+	});
+});
 
 // Commands
 // =========================================================================
@@ -84,8 +115,14 @@ try {
 	for (let i = 0; i < keys.length; i++)
 		if (customConfig.hasOwnProperty(keys[i]))
 			config[keys[i]] = Object.assign(config[keys[i]], customConfig[keys[i]]);
-} catch (_) {
-	// Eh
+} catch (err) {
+	if (err.message.indexOf("no such file") > -1) {
+		console.log(
+			chalk.bold.keyword("orange")("No config file found, using default")
+		);
+	} else {
+		console.error(chalk.bold.red("Config Error: ") + err.message);
+	}
 }
 
 // Log
@@ -132,14 +169,6 @@ gulp.on('task_err', function(e) {
 		chalk.magenta(time)
 	);
 	console.log(msg);
-});
-
-gulp.on('task_not_found', function(err) {
-	console.log(
-		chalk.red('Task \'' + err.task + '\' is not in your gulpfile')
-	);
-	console.log('Please check the documentation for proper gulpfile formatting');
-	process.exit(1);
 });
 
 // Build
