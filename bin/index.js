@@ -43,35 +43,6 @@ const rollup = require("rollup").rollup
 
 const browserSync = require("browser-sync").create();
 
-// Updates
-// =========================================================================
-
-https.get("https://raw.githubusercontent.com/Tam/build/master/package.json?c=" + (new Date()), resp => {
-	let data = '';
-	
-	// A chunk of data has been recieved.
-	resp.on('data', (chunk) => {
-		data += chunk;
-	});
-	
-	// The whole response has been received. Print out the result.
-	resp.on('end', () => {
-		const newVersion = JSON.parse(data).version;
-		
-		if (compareVersions(newVersion, version) === 1) {
-			setTimeout(() => {
-				const g = chalk.green
-					, c = chalk.bold.cyan;
-				
-				console.log(g("╔══════════════════════════╗"));
-				console.log(g("║") + "  An update is available  " + g("║"));
-				console.log(g("║") + c("    npm i -g tam/build    ") + g("║"));
-				console.log(g("╚══════════════════════════╝"));
-			}, 1000);
-		}
-	});
-});
-
 // Commands
 // =========================================================================
 
@@ -79,6 +50,7 @@ program
 	.version(version)
 	.option("--less", "Compile LESS once only")
 	.option("--js", "Compile JS once only")
+	.option("--init", "Create a .buildrc file containing the default config")
 	.parse(process.argv);
 
 // Config
@@ -107,6 +79,15 @@ let config = {
 	}
 };
 
+if (program.init) {
+	fs.writeFile(".buildrc", JSON.stringify(config, null, "\t"), (err) => {
+		if (err) throw err;
+		console.log(chalk.bold.green("The config file has been saved!"));
+	});
+	
+	return;
+}
+
 try {
 	let customConfig = JSON.parse(fs.readFileSync(getPath(".buildrc")));
 	
@@ -124,6 +105,35 @@ try {
 		console.error(chalk.bold.red("Config Error: ") + err.message);
 	}
 }
+
+// Updates
+// =========================================================================
+
+https.get("https://raw.githubusercontent.com/Tam/build/master/package.json?c=" + (new Date()), resp => {
+	let data = '';
+	
+	// A chunk of data has been recieved.
+	resp.on('data', (chunk) => {
+		data += chunk;
+	});
+	
+	// The whole response has been received. Print out the result.
+	resp.on('end', () => {
+		const newVersion = JSON.parse(data).version;
+		
+		if (compareVersions(newVersion, version) === 1) {
+			setTimeout(() => {
+				const g = chalk.green
+					, c = chalk.bold.cyan;
+				
+				console.log(g("╔══════════════════════════╗"));
+				console.log(g("║") + "  An update is available  " + g("║"));
+				console.log(g("║") + c("    npm i -g tam/build    ") + g("║"));
+				console.log(g("╚══════════════════════════╝"));
+			}, 1000);
+		}
+	});
+});
 
 // Log
 // =========================================================================

@@ -41,6 +41,7 @@ with `!` will ignore that file, `*` are wildcards.
 - `build` - Starts the watcher & build process
 - `build --js` - Builds the JS once only
 - `build --less` - Builds the LESS once only
+- `build --init` - Creates a .buildrc file containing the default config
 
 ## What it does
 ### LESS
@@ -62,6 +63,7 @@ with `!` will ignore that file, `*` are wildcards.
 (this includes the JS & LESS `watch`es) 
 
 ## TODO
+- [ ] Add support for multiple inputs & outputs
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
 - [ ] Move away from Gulp?
 - [ ] Add React support via webpack
