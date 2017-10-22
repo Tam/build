@@ -242,7 +242,6 @@ gulp.task("js", function () {
 				main: true,
 				browser: true
 			}),
-			commonjs(),
 			babel({
 				"presets": [
 					[babelPath("env", "preset"), {
@@ -262,6 +261,7 @@ gulp.task("js", function () {
 					babelPath("transform-object-rest-spread"),
 				]
 			}),
+			commonjs(),
 			uglify({}, minify)
 		],
 		sourcemap: true
