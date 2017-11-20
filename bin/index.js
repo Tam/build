@@ -236,12 +236,14 @@ gulp.task("js", function () {
 				},
 				envs: ["browser", "es6"]
 			}),
-			commonjs(),
 			nodeResolve({
 				module: true,
 				jsnext: true,
 				main: true,
 				browser: true
+			}),
+			commonjs({
+				include: 'node_modules/**',
 			}),
 			babel({
 				"presets": [
