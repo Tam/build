@@ -236,6 +236,7 @@ gulp.task("js", function () {
 				},
 				envs: ["browser", "es6"]
 			}),
+			commonjs(),
 			nodeResolve({
 				module: true,
 				jsnext: true,
@@ -261,7 +262,6 @@ gulp.task("js", function () {
 					babelPath("transform-object-rest-spread"),
 				]
 			}),
-			commonjs(),
 			uglify({}, minify)
 		],
 		sourcemap: true
