@@ -37,6 +37,26 @@ Create a `.buildrc` file to configure
 URL's must be relative to the directory `build` is being run in. Prefixing a url
 with `!` will ignore that file, `*` are wildcards.
 
+### Multiple JS files
+
+You can build multiple separate JS files by passing an array of paths to the 
+`input` and `output` parameters (remember to watch all these directories!).
+
+```json
+{
+	"js": {
+		"input": [
+			"fileA.js",
+			"fileB.js"
+		],
+		"output": [
+			"fileA.min.js",
+			"fileB.min.js"
+		]
+	}
+}
+```
+
 ## Commands
 - `build` - Starts the watcher & build process
 - `build --js` - Builds the JS once only
