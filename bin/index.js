@@ -184,6 +184,9 @@ gulp.on('task_err', function(e) {
 // Build
 // =========================================================================
 
+// Build: Helpers
+// -------------------------------------------------------------------------
+
 const reload = () => {
 	if (!config.browserSync.ignore)
 		browserSync.reload();
@@ -201,21 +204,9 @@ function babelPath (name, type = "plugin") {
 	return __dirname + "/../node_modules/babel-" + type + "-" + name;
 }
 
-gulp.task("less", function () {
-	gulp.src(getPath(config.less.input))
-	    .pipe(sourcemaps.init())
-	    .pipe(less({
-		    plugins: [autoprefixer]
-	    }).on("error", function(err){ console.log(err.message); }))
-	    .pipe(cleanCss())
-	    .pipe(sourcemaps.write("."))
-	    .pipe(gulp.dest(getPath(config.less.output)))
-	    .on("end", reload);
-});
-
-gulp.task("js", function () {
+function rl (i, o) {
 	rollup({
-		input: getPath(config.js.input),
+		input: getPath(i),
 		plugins: [
 			eslint({
 				useEslintrc: false,
@@ -271,7 +262,7 @@ gulp.task("js", function () {
 		bundle.write({
 			format: "es",
 			sourcemap: true,
-			file: getPath(config.js.output)
+			file: getPath(o)
 		});
 		reload();
 	}).catch(function(err) {
@@ -279,6 +270,49 @@ gulp.task("js", function () {
 		if (err.constructor.name !== "SyntaxError")
 			console.error(err);
 	});
+}
+
+// Build: LESS
+// -------------------------------------------------------------------------
+
+gulp.task("less", function () {
+	gulp.src(getPath(config.less.input))
+	    .pipe(sourcemaps.init())
+	    .pipe(less({
+		    plugins: [autoprefixer]
+	    }).on("error", function(err){ console.log(err.message); }))
+	    .pipe(cleanCss())
+	    .pipe(sourcemaps.write("."))
+	    .pipe(gulp.dest(getPath(config.less.output)))
+	    .on("end", reload);
+});
+
+// Build: JS
+// -------------------------------------------------------------------------
+
+const iA = typeof config.js.input === typeof []
+	, oA = typeof config.js.output === typeof [];
+
+if (!config.js.ignore) {
+	if (iA && !oA || !iA && oA)
+		throw "Your JS inputs and outputs must be of the same type";
+	
+	if (iA && oA && config.js.input.length !== config.js.output.length)
+		throw "Your JS input & output arrays must match in length";
+}
+
+function buildJS () {
+	if (iA) {
+		config.js.input.map((input, i) => {
+			rl(input, config.js.output[i]);
+		});
+	} else {
+		rl(config.js.input, config.js.output);
+	}
+}
+
+gulp.task("js", function () {
+	buildJS();
 });
 
 
@@ -299,7 +333,7 @@ if (program.less) {
 }
 
 if (program.js) {
-	gulp.start("js");
+	buildJS();
 	return;
 }
 
