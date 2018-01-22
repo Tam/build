@@ -83,7 +83,7 @@ You can build multiple separate JS files by passing an array of paths to the
 (this includes the JS & LESS `watch`es) 
 
 ## TODO
-- [ ] Add support for multiple inputs & outputs
+- [x] Add support for multiple inputs & outputs
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
 - [ ] Move away from Gulp?
 - [ ] Add React support via webpack
