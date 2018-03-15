@@ -4,6 +4,7 @@ const STATUSES = CONSTS.STATUSES
 	, DEFAULT_STAT = CONSTS.DEFAULT_STAT
 	, clearConsole = require("./helpers/clearConsole")
 	, chalk = require("chalk")
+	, prettyTime = require("pretty-hrtime")
 	, config = require("./helpers/loadConfig");
 
 const stats = {
@@ -45,7 +46,9 @@ function draw () {
 			}
 		}
 		
-		let msg = icon + " " + s.name + " " + chalk.blue(s.time);
+		let msg = icon + " " + s.name + " ";
+		if (s.time)
+			msg += chalk.blue(prettyTime(s.time));
 		
 		if (s.ignored)
 			msg = chalk.dim(msg);

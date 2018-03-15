@@ -1,8 +1,9 @@
 #! /usr/bin/env node
 
 const config = require("./helpers/loadConfig")
+	, getPath = require("./helpers/getPath")
 	, output = require("./output")
-	, clearConsole = require("./helpers/clearConsole")
+	, chokidar = require("chokidar")
 	, lessCompiler = require("./build/less");
 
 // Validate Config
@@ -34,7 +35,8 @@ const reload = () => {
 
 const startBrowserSync = () => {
 	browserSync.init({
-		open: "external",
+		// open: "external",
+		open: false,
 		proxy: config.browserSync.proxy,
 		host: config.browserSync.proxy,
 		watchEvents: ["add", "change", "unlink", "addDir", "unlinkDir"],
@@ -48,11 +50,28 @@ const startBrowserSync = () => {
 output.draw();
 
 if (process.argv.slice(2)[0] === "once") {
-	// TODO: Run tasks once then close
 	if (!config.less.ignore)
 		lessCompiler.run();
 } else {
 	startBrowserSync();
 	
-	// TODO: Watch dirs
+	function groupPaths (paths) {
+		return paths.map(getPath).reduce((a, b) => {
+			if (b[0] === "!") a[1].push(b.slice(1, b.length));
+			else a[0].push(b);
+			return a;
+		}, [[/* watch */], [/* ignore */]]);
+	}
+	
+	if (!config.less.ignore) {
+		const [watch, ignore] = groupPaths(config.less.watch);
+		
+		chokidar.watch(watch, {
+			ignore,
+			ignoreInitial: true,
+			ignorePermissionErrors: true,
+		}).on("all", () => {
+			lessCompiler.run(reload);
+		});
+	}
 }

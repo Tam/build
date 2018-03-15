@@ -1,6 +1,7 @@
 const lessConfig = require("../helpers/loadConfig").less
 	, STATUSES = require("../const").STATUSES
 	, getPath = require("../helpers/getPath")
+	, trackTime = require("../helpers/trackTime")()
 	, output = require("../output")
 	, less = require("less")
 	, postcss = require("postcss")
@@ -24,12 +25,12 @@ const i = getPath(lessConfig.input)
 	, o = getPath(lessConfig.output, "style.css");
 
 const localPath = path.dirname(i);
-
 const clearLocalPath = s => s.replace(localPath + "/", "");
 
-// TODO: Record execution time
 module.exports = {
-	run: function () {
+	run: function (reload) {
+		trackTime.start();
+		
 		output.updateStats("less", {
 			status: STATUSES.WORKING,
 		});
@@ -42,6 +43,7 @@ module.exports = {
 			output.updateStats("less", {
 				status: STATUSES.FAILURE,
 				errors: err.message,
+				time: trackTime.stop(),
 			});
 			return;
 		}
@@ -84,13 +86,17 @@ module.exports = {
 				fs.writeFileSync(o, css);
 				if (map) fs.writeFileSync(o + ".map", map);
 				
+				reload();
+				
 				output.updateStats("less", {
 					status: STATUSES.SUCCESS,
+					time: trackTime.stop(),
 				});
 			}).catch(err => {
 				output.updateStats("less", {
 					status: STATUSES.FAILURE,
 					errors: err.message,
+					time: trackTime.stop(),
 				});
 			});
 		}).catch(err => {
@@ -99,9 +105,9 @@ module.exports = {
 			
 			output.updateStats("less", {
 				status: STATUSES.FAILURE,
-				// errors: err.message + "\n" + extract,
 				errors: `${err.message} in ${clearLocalPath(err.filename)} `
 				        + `(${err.line}:${err.column})\n\n${extract}\n`,
+				time: trackTime.stop(),
 			});
 		});
 	}
