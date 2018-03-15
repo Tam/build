@@ -13,23 +13,35 @@ Create a `.buildrc` file to configure
 {
 	"less": {
 		"ignore": false,
-		"input":  "public/assets/less/style.less",
+		"input": "public/assets/less/style.less",
 		"output": "public/assets/css",
-		"watch":  ["public/assets/less/**/*"]
+		"watch": [
+			"public/assets/less/**/*"
+		]
 	},
 	"js": {
 		"ignore": false,
-		"input":  "public/assets/js/app.js",
+		"input": "public/assets/js/app.js",
 		"output": "public/assets/js/app.min.js",
-		"watch":  [
+		"watch": [
 			"public/assets/js/**/*.js",
 			"!public/assets/js/**/*.min.js"
 		]
 	},
+	"critical": {
+		"ignore": false,
+		"base": "LOCAL_URL.dev",
+		"output": "craft/templates/_critical",
+		"paths": {
+			"_templateName": "url/to/template"
+		}
+	},
 	"browserSync": {
 		"ignore": false,
 		"proxy": "LOCAL_URL.dev",
-		"watch": ["craft/templates/**/*"]
+		"watch": [
+			"craft/templates/**/*"
+		]
 	}
 }
 ```
@@ -59,9 +71,8 @@ You can build multiple separate JS files by passing an array of paths to the
 
 ## Commands
 - `build` - Starts the watcher & build process
-- `build --js` - Builds the JS once only
-- `build --less` - Builds the LESS once only
-- `build --init` - Creates a .buildrc file containing the default config
+- `build init` - Creates a .buildrc file containing the default config
+- `build once` - Runs the build once
 
 ## What it does
 ### LESS
