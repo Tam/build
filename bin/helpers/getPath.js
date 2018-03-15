@@ -6,13 +6,17 @@ const targetDir = fs.realpathSync(process.cwd());
 /**
  * Get's the absolute path to the given relative path
  *
- * @param file
+ * @param {string} file
+ * @param {string=} filename
  * @returns {string}
  */
-const getPath = file => {
+const getPath = (file, filename = "") => {
 	let bang = file[0] === "!";
 	
 	if (bang) file = file.slice(1, file.length);
+	
+	if (!path.parse(file).ext && filename)
+		file = path.join(file, filename);
 	
 	return (bang ? "!" : "") + path.join(targetDir, file);
 };

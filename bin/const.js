@@ -1,4 +1,11 @@
-module.exports = {
+const STATUSES = {
+	WORKING: "working",
+	SUCCESS: "success",
+	WARNING: "warning",
+	FAILURE: "failure",
+};
+
+const consts = {
 	config: {
 		less: {
 			ignore: false,
@@ -29,4 +36,16 @@ module.exports = {
 			watch: ["craft/templates/**/*"],
 		},
 	},
+	
+	STATUSES,
+	
+	DEFAULT_STAT: {
+		ignored: false,
+		status: STATUSES.SUCCESS,
+		errors: "",
+		warnings: "",
+		time: "" // µ
+	},
 };
+
+module.exports = consts;
