@@ -1,4 +1,5 @@
 const jsConfig = require("../helpers/loadConfig").js
+	, STATUSES = require("../const").STATUSES
 	, getPath = require("../helpers/getPath")
 	, trackTime = require("../helpers/trackTime")()
 	, createCompiler = require("../helpers/createCompiler")
@@ -139,6 +140,10 @@ const compiler = createCompiler("js", webpack, {
 module.exports = {
 	run: function (reload) {
 		trackTime.start();
+		
+		output.updateStats("js", {
+			status: STATUSES.WORKING,
+		});
 		
 		// Run the compiler
 		compiler.run((err, stats) => {

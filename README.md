@@ -96,4 +96,5 @@ You can build multiple separate JS files by passing an array of paths to the
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
 - [x] Move away from Gulp?
 - [ ] Add React support via webpack
-- [ ] Add check for newer versions of ~~self and~~ dependencies
+- [x] Add check for newer versions of self
+- [ ] Allow output to be object w/ `{ filename, path }` for both Less & JS
