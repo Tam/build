@@ -61,13 +61,15 @@ const STAT = {
 	ignored: false,
 	status: STATUSES.SUCCESS,
 	errors: "",
-	time: "15ms"
+	time: "150µ"
 };
 const stats = {
 	less: Object.assign({ name: "LESS" }, STAT),
 	js: Object.assign({ name: "JS" }, STAT),
 	critical: Object.assign({ name: "Critical" }, STAT),
 };
+
+stats.js.ignored = true;
 
 function draw () {
 	clearConsole();
@@ -84,25 +86,28 @@ function draw () {
 	for (let i = 0, l = v.length; i < l; ++i) {
 		const s = v[i];
 		
-		let icon = chalk.bold.gray("i");
-		switch (s.status) {
-			case STATUSES.WORKING:
-				icon = chalk.bold.yellow("w");
-				break;
-			case STATUSES.SUCCESS:
-				icon = chalk.bold.green("✓");
-				break;
-			case STATUSES.FAILURE:
-				icon = chalk.bold.red("✘");
-				break;
+		let icon = chalk.bold.gray("○");
+		
+		if (!s.ignored) {
+			switch (s.status) {
+				case STATUSES.WORKING:
+					icon = chalk.bold.yellow("►");
+					break;
+				case STATUSES.SUCCESS:
+					icon = chalk.bold.green("✓");
+					break;
+				case STATUSES.FAILURE:
+					icon = chalk.bold.red("✘");
+					break;
+			}
 		}
 		
-		// TODO: Pad spacing to align times
-		console.log(
-			icon + " " +
-			s.name + " " +
-			chalk.blue(s.time)
-		);
+		let msg = icon + " " + s.name + " " + chalk.blue(s.time);
+		
+		if (s.ignored)
+			msg = chalk.dim(msg);
+		
+		console.log(msg);
 	}
 	
 	// TODO: SHow errors
