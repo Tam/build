@@ -139,6 +139,9 @@ const compiler = createCompiler("js", webpack, {
 
 module.exports = {
 	run: function (reload) {
+		if (output.stats.js.status === STATUSES.WORKING)
+			return;
+		
 		trackTime.start();
 		
 		output.updateStats("js", {

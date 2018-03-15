@@ -89,4 +89,5 @@ function updateStats (key, nextStats, dontDraw = false) {
 module.exports = {
 	draw,
 	updateStats,
+	stats,
 };

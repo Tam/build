@@ -22,6 +22,9 @@ const clearAbsPath = s => s.replace(localPath + "/", "");
 
 module.exports = {
 	run: function (reload) {
+		if (output.stats.less.status === STATUSES.WORKING)
+			return;
+		
 		trackTime.start();
 		
 		output.updateStats("less", {
