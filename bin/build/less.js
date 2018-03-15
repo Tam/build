@@ -43,10 +43,12 @@ module.exports = {
 		}
 		
 		// 1. Compile the LESS
+		// TODO: Source map paths for non-input files absolute - make relative
 		less.render(rawLess, {
 			paths: [path.dirname(i)],
 			relativeUrls: true,
 			sourceMap: {},
+			filename: path.basename(i),
 		}).then(({ css, map }) => {
 			// 2. Run through PostCSS
 			postcss([
