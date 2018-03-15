@@ -1,7 +1,13 @@
 const fs = require("fs")
 	, config = require("../const").config
-	, chalk = require("chalk")
 	, getPath = require("./getPath");
+
+let cachedConfig = null;
+
+if (cachedConfig) {
+	module.exports = cachedConfig;
+	return;
+}
 
 // Load and parse `.buildrc` or fall back to the default config
 try {
@@ -17,13 +23,12 @@ try {
 } catch (err) {
 	// If we don't have a file
 	if (err.message.indexOf("no such file") > -1) {
-		console.log(
-			chalk.bold.keyword("orange")("No config file found, using default")
-		);
+		config.__isDefault = true;
 	} else {
 		// If there was a parsing error
-		console.error(chalk.bold.red("Config Error: ") + err.message);
+		config.__hasError = err.message;
 	}
 }
 
+cachedConfig = config;
 module.exports = config;
