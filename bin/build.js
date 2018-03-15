@@ -2,7 +2,6 @@
 
 const config = require("./helpers/loadConfig")
 	, chalk = require("chalk")
-	, spin = require('term-spinner')
 	, clearConsole = require("./helpers/clearConsole")
 	, lessBuild = require("./build/less");
 
@@ -24,14 +23,6 @@ if (!config.js.ignore) {
 // =========================================================================
 
 clearConsole();
-
-if (config.__isDefault) {
-	console.log(
-		chalk.bold.keyword("orange")("No config file found, using default")
-	);
-} else if (config.__hasError) {
-	console.error(chalk.bold.red("Config Error: ") + config.__hasError);
-}
 
 // Tasks
 // =========================================================================
@@ -59,45 +50,65 @@ const startBrowserSync = () => {
 // Build
 // =========================================================================
 
-const spinner = spin.new(spin.types.Spin5);
-const spinner2 = spin.new(spin.types.Spin5);
+const STATUSES = {
+	WORKING: "working",
+	SUCCESS: "success",
+	FAILURE: "failure",
+};
 
-let isFirst = true;
+// TODO: Move to consts
+const STAT = {
+	ignored: false,
+	status: STATUSES.SUCCESS,
+	errors: "",
+	time: "15ms"
+};
+const stats = {
+	less: Object.assign({ name: "LESS" }, STAT),
+	js: Object.assign({ name: "JS" }, STAT),
+	critical: Object.assign({ name: "Critical" }, STAT),
+};
 
-// TODO: Probably don't use animated spinner
-setInterval(function () {
-	if (!isFirst)
-		process.stdout.moveCursor(0, -3);
+function draw () {
+	clearConsole();
 	
-	isFirst = false;
+	if (config.__isDefault) {
+		console.log(
+			chalk.bold.keyword("orange")("No config file found, using default")
+		);
+	} else if (config.__hasError) {
+		console.error(chalk.bold.red("Config Error: ") + config.__hasError);
+	}
 	
-	process.stdout.clearLine();
-	process.stdout.cursorTo(0);
+	const v = Object.values(stats);
+	for (let i = 0, l = v.length; i < l; ++i) {
+		const s = v[i];
+		
+		let icon = chalk.bold.gray("i");
+		switch (s.status) {
+			case STATUSES.WORKING:
+				icon = chalk.bold.yellow("w");
+				break;
+			case STATUSES.SUCCESS:
+				icon = chalk.bold.green("✓");
+				break;
+			case STATUSES.FAILURE:
+				icon = chalk.bold.red("✘");
+				break;
+		}
+		
+		// TODO: Pad spacing to align times
+		console.log(
+			icon + " " +
+			s.name + " " +
+			chalk.blue(s.time)
+		);
+	}
 	
-	spinner.next();
-	process.stdout.write([
-		// chalk.bold.yellow(spinner.current),
-		chalk.bold.green("✓"),
-		"Less"
-	].join(" "));
-	
-	process.stdout.write("\n");
-	
-	spinner2.next();
-	process.stdout.write([
-		chalk.bold.yellow(spinner2.current),
-		"JS" // NOTE: The spinner only takes up 1 char while the ✓ & ✘ take up  (on JetBrains terminal)
-	].join(" "));
-	
-	process.stdout.write("\n");
-	
-	process.stdout.write([
-		chalk.bold.red("✘"),
-		"Critical"
-	].join(" "));
-	
-	process.stdout.write("\n");
-}, 100);
+	// TODO: SHow errors
+}
+
+draw();
 
 if (process.argv.slice(2)[0] === "once") {
 	// TODO: Run tasks once then close
