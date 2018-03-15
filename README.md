@@ -22,7 +22,7 @@ Create a `.buildrc` file to configure
 	"js": {
 		"ignore": false,
 		"input": "public/assets/js/app.js",
-		"output": "public/assets/js/app.min.js",
+		"output": "bundle.js",
 		"watch": [
 			"public/assets/js/**/*.js",
 			"!public/assets/js/**/*.min.js"
@@ -53,6 +53,7 @@ with `!` will ignore that file, `*` are wildcards.
 
 You can build multiple separate JS files by passing an array of paths to the 
 `input` and `output` parameters (remember to watch all these directories!).
+`output` follows [Webpack's `output.filename`](https://webpack.js.org/configuration/output/#output-filename).
 
 ```json
 {
@@ -61,10 +62,7 @@ You can build multiple separate JS files by passing an array of paths to the
 			"fileA.js",
 			"fileB.js"
 		],
-		"output": [
-			"fileA.min.js",
-			"fileB.min.js"
-		]
+		"output": "[name].js",
 	}
 }
 ```
@@ -96,6 +94,6 @@ You can build multiple separate JS files by passing an array of paths to the
 ## TODO
 - [x] Add support for multiple inputs & outputs
 - [ ] Make Babel, ESLint, & AutoPrefixer configurable (locally & globally)
-- [ ] Move away from Gulp?
+- [x] Move away from Gulp?
 - [ ] Add React support via webpack
 - [ ] Add check for newer versions of ~~self and~~ dependencies

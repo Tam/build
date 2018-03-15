@@ -1,6 +1,7 @@
 const lessConfig = require("../helpers/loadConfig").less
 	, STATUSES = require("../const").STATUSES
 	, getPath = require("../helpers/getPath")
+	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence")
 	, trackTime = require("../helpers/trackTime")()
 	, output = require("../output")
 	, less = require("less")
@@ -13,19 +14,11 @@ const autoprefixer = require("autoprefixer")
 	, customProperties = require("postcss-custom-properties")
 	, cssnano = require("cssnano");
 
-function ensureDirectoryExistence(filePath) {
-	const dirname = path.dirname(filePath);
-	if (fs.existsSync(dirname))
-		return true;
-	ensureDirectoryExistence(dirname);
-	fs.mkdirSync(dirname);
-}
-
 const i = getPath(lessConfig.input)
 	, o = getPath(lessConfig.output, "style.css");
 
 const localPath = path.dirname(i);
-const clearLocalPath = s => s.replace(localPath + "/", "");
+const clearAbsPath = s => s.replace(localPath + "/", "");
 
 module.exports = {
 	run: function (reload) {
@@ -57,7 +50,7 @@ module.exports = {
 		}).then(({ css, map }) => {
 			// Make source map paths relative
 			map = JSON.parse(map);
-			map.sources = map.sources.map(clearLocalPath);
+			map.sources = map.sources.map(clearAbsPath);
 			map = JSON.stringify(map);
 			
 			// 2. Run through PostCSS
@@ -86,7 +79,7 @@ module.exports = {
 				fs.writeFileSync(o, css);
 				if (map) fs.writeFileSync(o + ".map", map);
 				
-				reload();
+				reload && reload();
 				
 				output.updateStats("less", {
 					status: STATUSES.SUCCESS,
@@ -105,7 +98,7 @@ module.exports = {
 			
 			output.updateStats("less", {
 				status: STATUSES.FAILURE,
-				errors: `${err.message} in ${clearLocalPath(err.filename)} `
+				errors: `${err.message} in ${clearAbsPath(err.filename)} `
 				        + `(${err.line}:${err.column})\n\n${extract}\n`,
 				time: trackTime.stop(),
 			});

@@ -4,21 +4,8 @@ const config = require("./helpers/loadConfig")
 	, getPath = require("./helpers/getPath")
 	, output = require("./output")
 	, chokidar = require("chokidar")
-	, lessCompiler = require("./build/less");
-
-// Validate Config
-// =========================================================================
-
-const iA = typeof config.js.input === typeof []
-	, oA = typeof config.js.output === typeof [];
-
-if (!config.js.ignore) {
-	if (iA && !oA || !iA && oA)
-		throw "Your JS inputs and outputs must be of the same type";
-	
-	if (iA && oA && config.js.input.length !== config.js.output.length)
-		throw "Your JS input & output arrays must match in length";
-}
+	, lessCompiler = require("./build/less")
+	, jsCompiler = require("./build/js");
 
 // Tasks
 // =========================================================================
@@ -52,6 +39,9 @@ output.draw();
 if (process.argv.slice(2)[0] === "once") {
 	if (!config.less.ignore)
 		lessCompiler.run();
+	
+	if (!config.js.ignore)
+		jsCompiler.run();
 } else {
 	startBrowserSync();
 	
@@ -60,18 +50,30 @@ if (process.argv.slice(2)[0] === "once") {
 			if (b[0] === "!") a[1].push(b.slice(1, b.length));
 			else a[0].push(b);
 			return a;
-		}, [[/* watch */], [/* ignore */]]);
+		}, [[/* watch */], [/* ignore */"*.map"]]);
 	}
 	
 	if (!config.less.ignore) {
-		const [watch, ignore] = groupPaths(config.less.watch);
+		const [watch, ignored] = groupPaths(config.less.watch);
 		
 		chokidar.watch(watch, {
-			ignore,
-			ignoreInitial: true,
+			ignored,
+			ignoreInitial:          true,
 			ignorePermissionErrors: true,
 		}).on("all", () => {
 			lessCompiler.run(reload);
+		});
+	}
+	
+	if (!config.js.ignore) {
+		const [watch, ignored] = groupPaths(config.js.watch);
+		
+		chokidar.watch(watch, {
+			ignored,
+			ignoreInitial:          true,
+			ignorePermissionErrors: true,
+		}).on("all", () => {
+			jsCompiler.run(reload);
 		});
 	}
 }

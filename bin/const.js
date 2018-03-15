@@ -15,11 +15,12 @@ const consts = {
 		},
 		js: {
 			ignore: false,
-			input:  "public/assets/js/app.js",
-			output: "public/assets/js/app.min.js",
+			input: "public/assets/js/app.js",
+			output: "bundle.js",
 			watch:  [
 				"public/assets/js/**/*.js",
-				"!public/assets/js/**/*.min.js",
+				"!public/assets/js/**/bundle.js",
+				"!public/assets/js/**/*.bundle.js",
 			],
 		},
 		critical: {

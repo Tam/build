@@ -10,7 +10,10 @@ const targetDir = fs.realpathSync(process.cwd());
  * @param {string=} filename
  * @returns {string}
  */
-const getPath = (file, filename = "") => {
+const getPath = (file = "", filename = "") => {
+	if (file === "")
+		return targetDir;
+	
 	let bang = file[0] === "!";
 	
 	if (bang) file = file.slice(1, file.length);

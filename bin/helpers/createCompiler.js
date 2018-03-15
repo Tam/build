@@ -23,7 +23,7 @@ function createCompiler (handle, webpack, config) {
 	compiler.plugin("invalid", () => {
 		output.updateStats(handle, {
 			status: STATUSES.WORKING,
-		});
+		}, false);
 	});
 	
 	// "done" event fires when Webpack has finished recompiling the bundle.
@@ -38,7 +38,7 @@ function createCompiler (handle, webpack, config) {
 		if (isSuccessful) {
 			output.updateStats(handle, {
 				status: STATUSES.SUCCESS,
-			});
+			}, false);
 		}
 		
 		// If errors exist, mark as failed
@@ -51,7 +51,7 @@ function createCompiler (handle, webpack, config) {
 			output.updateStats(handle, {
 				status: STATUSES.FAILURE,
 				errors: messages.errors.join("\n\n"),
-			});
+			}, false);
 			return;
 		}
 		
@@ -60,17 +60,17 @@ function createCompiler (handle, webpack, config) {
 			let warnings = messages.warnings.join("\n\n");
 			
 			// Learn yo self some eslint
-			warnings += "\nSearch for the "
-			            + chalk.underline(chalk.yellow("keywords"))
-			            + " to learn more about each warning.";
-			warnings += "\nTo ignore, add "
-			            + chalk.cyan("// eslint-disable-next-line")
-			            + " to the line before.\n";
+			// warnings += "\nSearch for the "
+			//             + chalk.underline(chalk.yellow("keywords"))
+			//             + " to learn more about each warning.";
+			// warnings += "\nTo ignore, add "
+			//             + chalk.cyan("// eslint-disable-next-line")
+			//             + " to the line before.\n";
 			
 			output.updateStats(handle, {
 				status: STATUSES.WARNING,
 				warnings,
-			});
+			}, false);
 		}
 	});
 	

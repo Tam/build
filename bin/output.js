@@ -81,9 +81,9 @@ function draw () {
 	}
 }
 
-function updateStats (key, nextStats) {
+function updateStats (key, nextStats, dontDraw = false) {
 	stats[key] = Object.assign(stats[key], nextStats);
-	draw();
+	if (!dontDraw) draw();
 }
 
 module.exports = {
