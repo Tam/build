@@ -61,15 +61,13 @@ const STAT = {
 	ignored: false,
 	status: STATUSES.SUCCESS,
 	errors: "",
-	time: "150µ"
+	time: "" // µ
 };
 const stats = {
 	less: Object.assign({ name: "LESS" }, STAT),
 	js: Object.assign({ name: "JS" }, STAT),
 	critical: Object.assign({ name: "Critical" }, STAT),
 };
-
-stats.js.ignored = true;
 
 function draw () {
 	clearConsole();
@@ -110,7 +108,13 @@ function draw () {
 		console.log(msg);
 	}
 	
-	// TODO: SHow errors
+	// TODO: Show errors
+}
+
+// TODO: Make accessible from build files
+function updateStats (key, nextStats) {
+	stats[key] = Object.assign(stats[key], nextStats);
+	draw();
 }
 
 draw();
@@ -122,3 +126,11 @@ if (process.argv.slice(2)[0] === "once") {
 	
 	// TODO: Watch dirs
 }
+
+setTimeout(() => {
+	updateStats("js", { status: STATUSES.WORKING });
+	
+	setTimeout(() => {
+		updateStats("js", { status: STATUSES.FAILURE });
+	}, 1000);
+}, 1000);
