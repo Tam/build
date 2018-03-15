@@ -23,6 +23,10 @@ function ensureDirectoryExistence(filePath) {
 const i = getPath(lessConfig.input)
 	, o = getPath(lessConfig.output, "style.css");
 
+const localPath = path.dirname(i);
+
+const clearLocalPath = s => s.replace(localPath + "/", "");
+
 // TODO: Record execution time
 module.exports = {
 	run: function () {
@@ -43,13 +47,17 @@ module.exports = {
 		}
 		
 		// 1. Compile the LESS
-		// TODO: Source map paths for non-input files absolute - make relative
 		less.render(rawLess, {
-			paths: [path.dirname(i)],
+			paths: [localPath],
 			relativeUrls: true,
 			sourceMap: {},
 			filename: path.basename(i),
 		}).then(({ css, map }) => {
+			// Make source map paths relative
+			map = JSON.parse(map);
+			map.sources = map.sources.map(clearLocalPath);
+			map = JSON.stringify(map);
+			
 			// 2. Run through PostCSS
 			postcss([
 				flexBugsFixes,
@@ -86,11 +94,14 @@ module.exports = {
 				});
 			});
 		}).catch(err => {
+			// Ensure errors are indented by 4 spaces
 			const extract = err.extract.join("\n").replace(/\t/g, "    ");
 			
 			output.updateStats("less", {
 				status: STATUSES.FAILURE,
-				errors: err.message + "\n" + extract,
+				// errors: err.message + "\n" + extract,
+				errors: `${err.message} in ${clearLocalPath(err.filename)} `
+				        + `(${err.line}:${err.column})\n\n${extract}\n`,
 			});
 		});
 	}
