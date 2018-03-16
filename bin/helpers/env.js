@@ -29,12 +29,14 @@ function writeToEnv (nextFile, handle) {
 	const nextName = handle + `="${hashedFilename}"`;
 	
 	if (match) {
-		envData = envData.replace(match[0], nextName);
-		const prevFile = path.join(dir, match[1]);
-		try {
-			fs.unlinkSync(prevFile);
-			fs.unlinkSync(prevFile + ".map");
-		} catch (e) {}
+		if (match[1] !== hashedFilename) {
+			envData = envData.replace(match[0], nextName);
+			const prevFile = path.join(dir, match[1]);
+			try {
+				fs.unlinkSync(prevFile);
+				fs.unlinkSync(prevFile + ".map");
+			} catch (e) {}
+		}
 	} else {
 		envData += "\r\n" + nextName;
 	}
