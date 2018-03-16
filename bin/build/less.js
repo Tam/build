@@ -39,7 +39,7 @@ module.exports = {
 		let rawLess;
 		
 		try {
-			rawLess = fs.readFileSync(i, "utf8");
+			rawLess = fs.readFileSync(i).toString();
 		} catch (err) {
 			output.updateStats("less", {
 				status: STATUSES.FAILURE,
@@ -48,6 +48,14 @@ module.exports = {
 			});
 			return;
 		}
+		
+		// Manually clear LESS caches
+		// Temp fix for https://github.com/less/less.js/issues/3185
+		const fileManagers = less.environment && less.environment.fileManagers || [];
+		fileManagers.forEach(fileManager => {
+			if (fileManager.contents)
+				fileManager.contents = {};
+		});
 		
 		// 1. Compile the LESS
 		less.render(rawLess, {
