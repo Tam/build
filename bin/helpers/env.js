@@ -1,5 +1,6 @@
 const fs = require("fs")
 	, path = require("path")
+	, crypto = require("crypto")
 	, config = require("./loadConfig")
 	, getPath = require("./getPath")
 	, ensureDirectoryExistence = require("./ensureDirectoryExistence");
@@ -40,6 +41,20 @@ function writeToEnv (nextFile, handle) {
 	} else {
 		envData += "\r\n" + nextName;
 	}
+	
+	// Update CACHE
+	const cacheHandle = "CACHE_HASH";
+	const cacheHash = `${cacheHandle}="${crypto.randomBytes(5).toString("hex")}"`;
+	const cacheRegex = new RegExp(`${cacheHandle}="([^"]*)"`, "g");
+	const cacheMatch = cacheRegex.exec(envData);
+	
+	if (cacheMatch) {
+		envData = envData.replace(cacheMatch[0], cacheHash);
+	} else {
+		envData += "\r\n" + cacheHash;
+	}
+	
+	// Write the .env
 	fs.writeFileSync(env, envData);
 }
 
