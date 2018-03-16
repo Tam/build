@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-function hashFilename (filename) {
+function hashFilename (filename, useHash = null) {
 	const hash = /\[hash:(\d)]/g.exec(filename);
 	if (!hash)
 		return;
@@ -10,7 +10,7 @@ function hashFilename (filename) {
 	
 	return filename.replace(
 		h,
-		crypto.randomBytes(l).toString("hex").substr(0, l)
+		(useHash || crypto.randomBytes(l).toString("hex")).substr(0, l)
 	);
 }
 

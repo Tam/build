@@ -2,10 +2,10 @@ const jsConfig = require("../helpers/loadConfig").js
 	, STATUSES = require("../const").STATUSES
 	, getPath = require("../helpers/getPath")
 	, trackTime = require("../helpers/trackTime")()
-	, hashFilename = require("../helpers/hashFilename")
 	, env = require("../helpers/env")
 	, createCompiler = require("../helpers/createCompiler")
 	, eslintFormatter = require("../helpers/eslintFormatter")
+	, hashFilename = require("../helpers/hashFilename")
 	, path = require("path")
 	, output = require("../output")
 	, webpack = require("webpack")
@@ -31,8 +31,6 @@ if (Array.isArray(jsConfig.input)) {
 	i = prefixRel(jsConfig.input);
 	o = jsConfig.output;
 }
-
-o = hashFilename(getPath(o), "js");
 
 let op = path.dirname(getPath(jsConfig.output));
 
@@ -164,7 +162,7 @@ module.exports = {
 			if (err || stats.hasErrors())
 				return;
 			
-			env(o, "js");
+			env(hashFilename(o, stats.hash), "js");
 			reload && reload();
 		});
 	},

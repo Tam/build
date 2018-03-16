@@ -17,7 +17,7 @@ const autoprefixer = require("autoprefixer")
 	, cssnano = require("cssnano");
 
 const i = getPath(lessConfig.input)
-	, o = hashFilename(getPath(lessConfig.output, "style.css"), "css");
+	, oo = getPath(lessConfig.output, "style.css");
 
 const localPath = path.dirname(i);
 const clearAbsPath = s => s.replace(localPath + "/", "");
@@ -26,6 +26,9 @@ module.exports = {
 	run: function (reload) {
 		if (output.stats.less.status === STATUSES.WORKING)
 			return;
+		
+		// Generate new hashed filename
+		const o = hashFilename(oo);
 		
 		trackTime.start();
 		
