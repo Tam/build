@@ -9,10 +9,10 @@ const { working, success, warning, failure, stats } = require("../output")
 
 const lessConfig = require("../helpers/loadConfig").less
 	, trackTime = require("../helpers/trackTime")()
+	, env = require("../helpers/env")
 	, getPath = require("../helpers/getPath")
-	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence")
 	, hashFilename = require("../helpers/hashFilename")
-	, env = require("../helpers/env");
+	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence");
 
 // File I/O
 const input  = getPath(lessConfig.input)
@@ -84,6 +84,7 @@ async function buildLess (reload) {
 			paths:        [lessDir],
 			relativeUrls: true,
 			sourceMap:    {},
+			strictMath:   lessConfig.options.strictMath,
 		});
 		
 		css = compiled.css;
@@ -98,6 +99,10 @@ async function buildLess (reload) {
 			extract: err.extract.join("\n").replace(/\t/g, "    "),
 			time:    trackTime.stop(),
 		});
+		
+		// TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
+		// TODO:        Format errors using the new additional data        :TODO
+		// TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
 		
 		return;
 	}

@@ -13,6 +13,9 @@ const consts = {
 			input:  "public/assets/less/style.less",
 			output: "public/assets/css/style.css",
 			watch:  ["public/assets/less/**/*"],
+			options: {
+				strictMath: true,
+			},
 		},
 		js: {
 			ignore: false,
