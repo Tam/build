@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A self contained build system for websites",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",

@@ -35,9 +35,9 @@ if (Array.isArray(jsConfig.input)) {
 let op = path.dirname(getPath(jsConfig.output));
 
 // Babel Path
-function babelPath (name, type = "plugin") {
-	return __dirname + "/../../node_modules/babel-" + type + "-" + name;
-}
+// function babelPath (name, type = "plugin") {
+// 	return __dirname + "/../../node_modules/babel-" + type + "-" + name;
+// }
 
 const compiler = createCompiler("js", webpack, {
 	context: getPath(),
@@ -85,21 +85,24 @@ const compiler = createCompiler("js", webpack, {
 							babelrc: false,
 							compact: false,
 							presets: [
-								[babelPath("env", "preset"), {
-									"targets": {
-										"browsers": [
-											"last 2 versions",
-											"safari >= 7",
-											"ie >= 10"
-										]
-									},
-									"modules": false
-								}]
+								[
+									require.resolve("babel-preset-env"),
+									{
+										"targets": {
+											"browsers": [
+												"last 2 versions",
+												"safari >= 7",
+												"ie >= 10"
+											]
+										},
+										"modules": false
+									}
+								]
 							],
 							plugins: [
-								babelPath("external-helpers"),
-								babelPath("transform-class-properties"),
-								babelPath("transform-object-rest-spread"),
+								require.resolve("babel-plugin-external-helpers"),
+								require.resolve("babel-plugin-transform-class-properties"),
+								require.resolve("babel-plugin-transform-object-rest-spread"),
 							],
 							cacheDirectory: true,
 							highlightCode: true,
