@@ -9,7 +9,7 @@ const https = require("https")
 https.get({
 	host: "raw.githubusercontent.com",
 	path: encodeURI("/Tam/build/v2/package.json?c=" + (new Date())),
-	timeout: 500, // Timeout after 1s to prevent any hanging
+	timeout: 1000, // Timeout after 1s to prevent any hanging
 }, resp => {
 	let data = '';
 	

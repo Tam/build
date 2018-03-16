@@ -7,6 +7,7 @@ const jsConfig = require("../helpers/loadConfig").js
 	, eslintFormatter = require("../helpers/eslintFormatter")
 	, hashFilename = require("../helpers/hashFilename")
 	, path = require("path")
+	, fs = require("fs")
 	, output = require("../output")
 	, webpack = require("webpack")
 	, UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -33,11 +34,6 @@ if (Array.isArray(jsConfig.input)) {
 }
 
 let op = path.dirname(getPath(jsConfig.output));
-
-// Babel Path
-// function babelPath (name, type = "plugin") {
-// 	return __dirname + "/../../node_modules/babel-" + type + "-" + name;
-// }
 
 const compiler = createCompiler("js", webpack, {
 	context: getPath(),
@@ -71,7 +67,7 @@ const compiler = createCompiler("js", webpack, {
 				],
 				exclude: /node_modules/,
 			},
-			// Process JS with Babel.
+			// Process JS
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
@@ -79,6 +75,7 @@ const compiler = createCompiler("js", webpack, {
 					// This loader parallelizes code compilation, it is optional
 					// but improves compile time on larger projects
 					require.resolve('thread-loader'),
+					// Babel
 					{
 						loader: require.resolve('babel-loader'),
 						options: {
@@ -164,7 +161,16 @@ module.exports = {
 			if (err || stats.hasErrors())
 				return;
 			
-			env(hashFilename(o, stats.hash), "js");
+			const hashedFilename = hashFilename(o, stats.hash);
+			const map = getPath(hashedFilename) + ".map";
+			
+			// Fix the sourcemap
+			fs.exists(map, () => {
+				const m = fs.readFileSync(map, { format: "utf8" }).toString();
+				fs.writeFileSync(map, m.replace(',"sourceRoot":""', ""));
+			});
+			
+			env(hashedFilename, "js");
 			reload && reload();
 		});
 	},
