@@ -7,10 +7,11 @@ const STATUSES = {
 
 const consts = {
 	config: {
+		".env": "/",
 		less: {
 			ignore: false,
 			input:  "public/assets/less/style.less",
-			output: "public/assets/css",
+			output: "public/assets/css/style.css",
 			watch:  ["public/assets/less/**/*"],
 		},
 		js: {
@@ -20,7 +21,6 @@ const consts = {
 			watch:  [
 				"public/assets/js/**/*.js",
 				"!public/assets/js/**/bundle.js",
-				"!public/assets/js/**/*.bundle.js",
 			],
 		},
 		critical: {

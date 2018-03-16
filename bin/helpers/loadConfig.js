@@ -1,5 +1,4 @@
 const fs = require("fs")
-	, path = require("path")
 	, config = require("../const").config
 	, getPath = require("./getPath");
 
@@ -17,9 +16,16 @@ try {
 	
 	// Merge shallow for each config group (i.e. less, js, etc.)
 	const keys = Object.keys(config);
-	for (let i = 0; i < keys.length; i++)
-		if (customConfig.hasOwnProperty(keys[i]))
-			config[keys[i]] = Object.assign(config[keys[i]], customConfig[keys[i]]);
+	for (let i = 0; i < keys.length; i++) {
+		if (customConfig.hasOwnProperty(keys[i])) {
+			if (typeof customConfig[keys[i]] === typeof {}) {
+				config[keys[i]] =
+					Object.assign(config[keys[i]], customConfig[keys[i]]);
+			} else {
+				config[keys[i]] = customConfig[keys[i]];
+			}
+		}
+	}
 	
 } catch (err) {
 	// If we don't have a file
@@ -30,11 +36,6 @@ try {
 		config.__hasError = err.message;
 	}
 }
-
-// Ensure the output path is relative
-// TODO: Allow user to specify output.path & output.filename (for less & js)
-if (~config.js.output.indexOf("/"))
-	config.js.output = path.basename(config.js.output);
 
 cachedConfig = config;
 module.exports = config;

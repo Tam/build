@@ -2,6 +2,8 @@ const jsConfig = require("../helpers/loadConfig").js
 	, STATUSES = require("../const").STATUSES
 	, getPath = require("../helpers/getPath")
 	, trackTime = require("../helpers/trackTime")()
+	, hashFilename = require("../helpers/hashFilename")
+	, env = require("../helpers/env")
 	, createCompiler = require("../helpers/createCompiler")
 	, eslintFormatter = require("../helpers/eslintFormatter")
 	, path = require("path")
@@ -13,7 +15,7 @@ const jsConfig = require("../helpers/loadConfig").js
 process.env.NODE_ENV = "production";
 
 // I/O
-let i, o, op;
+let i, o;
 
 const prefixRel = s => (s[0] + s[1] !== "./" ? "./" : "") + s;
 
@@ -22,13 +24,17 @@ if (Array.isArray(jsConfig.input)) {
 		a[path.basename(b, ".js")] = prefixRel(b);
 		return a;
 	}, {});
-	o = ~jsConfig.output.indexOf("[name]") ? jsConfig.output : "[name].bundle.js";
-	op = path.dirname(getPath(jsConfig.input[0]));
+	o = ~jsConfig.output.indexOf("[name]")
+		? jsConfig.output
+		: path.dirname(getPath(jsConfig.input)) + "[name].bundle.js";
 } else {
 	i = prefixRel(jsConfig.input);
 	o = jsConfig.output;
-	op = path.dirname(getPath(jsConfig.input));
 }
+
+o = hashFilename(getPath(o), "js");
+
+let op = path.dirname(getPath(jsConfig.output));
 
 // Babel Path
 function babelPath (name, type = "plugin") {
@@ -39,7 +45,8 @@ const compiler = createCompiler("js", webpack, {
 	context: getPath(),
 	entry: i,
 	output: {
-		filename: o,
+		// We'll manage filename hashing so we an keep track of it
+		filename: path.basename(o),
 		path: op,
 	},
 	mode: "production",
@@ -156,7 +163,8 @@ module.exports = {
 			
 			if (err || stats.hasErrors())
 				return;
-
+			
+			env(o, "js");
 			reload && reload();
 		});
 	},

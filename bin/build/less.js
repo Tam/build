@@ -3,6 +3,8 @@ const lessConfig = require("../helpers/loadConfig").less
 	, getPath = require("../helpers/getPath")
 	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence")
 	, trackTime = require("../helpers/trackTime")()
+	, hashFilename = require("../helpers/hashFilename")
+	, env = require("../helpers/env")
 	, output = require("../output")
 	, less = require("less")
 	, postcss = require("postcss")
@@ -15,7 +17,7 @@ const autoprefixer = require("autoprefixer")
 	, cssnano = require("cssnano");
 
 const i = getPath(lessConfig.input)
-	, o = getPath(lessConfig.output, "style.css");
+	, o = hashFilename(getPath(lessConfig.output, "style.css"), "css");
 
 const localPath = path.dirname(i);
 const clearAbsPath = s => s.replace(localPath + "/", "");
@@ -82,6 +84,8 @@ module.exports = {
 				fs.writeFileSync(o, css);
 				if (map) fs.writeFileSync(o + ".map", map);
 				
+				console.log(o);
+				env(o, "less");
 				reload && reload();
 				
 				output.updateStats("less", {

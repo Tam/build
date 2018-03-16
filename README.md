@@ -11,10 +11,11 @@ Create a `.buildrc` file to configure
 
 ```json
 {
+	".env": "/.env",
 	"less": {
 		"ignore": false,
 		"input": "public/assets/less/style.less",
-		"output": "public/assets/css",
+		"output": "public/assets/css/style.css",
 		"watch": [
 			"public/assets/less/**/*"
 		]
@@ -22,10 +23,10 @@ Create a `.buildrc` file to configure
 	"js": {
 		"ignore": false,
 		"input": "public/assets/js/app.js",
-		"output": "bundle.js",
+		"output": "public/assets/js/bundle.js",
 		"watch": [
 			"public/assets/js/**/*.js",
-			"!public/assets/js/**/*.min.js"
+			"!public/assets/js/**/bundle.js"
 		]
 	},
 	"critical": {
@@ -49,6 +50,15 @@ Create a `.buildrc` file to configure
 URL's must be relative to the directory `build` is being run in. Prefixing a url
 with `!` will ignore that file, `*` are wildcards.
 
+##### .env
+The path to your `.env` file. If you're using a hashed filename, the name will be written to the file using the `JS_FILENAME` or `CSS_FILENAME` handles.
+
+##### Output
+The both LESS & JS outputs can include a path (relative to the directory build is run in).
+
+They can also include random hash generation (for cache breaking). 
+`"output": "public/assets/build/app.[hash:5].min.js"`
+
 ### Multiple JS files
 
 You can build multiple separate JS files by passing an array of paths to the 
@@ -62,7 +72,7 @@ You can build multiple separate JS files by passing an array of paths to the
 			"fileA.js",
 			"fileB.js"
 		],
-		"output": "[name].js",
+		"output": "[name].js"
 	}
 }
 ```
