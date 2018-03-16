@@ -9,9 +9,12 @@ let env;
 
 if (config.hasOwnProperty(".env")) {
 	env = config[".env"];
-	ensureDirectoryExistence(getPath(env));
-	if (!fs.existsSync(env))
-		fs.writeFileSync(env);
+	
+	if (env) {
+		ensureDirectoryExistence(getPath(env));
+		if (!fs.existsSync(env))
+			fs.writeFileSync(env);
+	}
 }
 
 function writeToEnv (nextFile, handle) {

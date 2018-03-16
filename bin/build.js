@@ -7,11 +7,8 @@ const config = require("./helpers/loadConfig")
 	, lessCompiler = require("./build/less")
 	, jsCompiler = require("./build/js");
 
-// Tasks
-// =========================================================================
-
 // Browser Sync
-// -------------------------------------------------------------------------
+// =========================================================================
 
 const browserSync = require("browser-sync").create();
 
@@ -38,7 +35,7 @@ output.draw();
 
 if (process.argv.slice(2)[0] === "once") {
 	if (!config.less.ignore)
-		lessCompiler.run();
+		lessCompiler();
 	
 	if (!config.js.ignore)
 		jsCompiler.run();
@@ -63,7 +60,7 @@ if (process.argv.slice(2)[0] === "once") {
 			ignoreInitial:          true,
 			ignorePermissionErrors: true,
 		}).on("all", () => {
-			lessCompiler.run(reload);
+			lessCompiler(reload);
 		});
 	}
 	

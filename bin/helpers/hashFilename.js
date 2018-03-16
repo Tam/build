@@ -3,7 +3,7 @@ const crypto = require("crypto");
 function hashFilename (filename, useHash = null) {
 	const hash = /\[hash:(\d)]/g.exec(filename);
 	if (!hash)
-		return;
+		return filename;
 	
 	const h = hash[0]
 		, l = +hash[1];

@@ -7,7 +7,7 @@ const STATUSES = {
 
 const consts = {
 	config: {
-		".env": "/",
+		".env": null,
 		less: {
 			ignore: false,
 			input:  "public/assets/less/style.less",
@@ -46,7 +46,12 @@ const consts = {
 		status: STATUSES.SUCCESS,
 		errors: "",
 		warnings: "",
-		time: "" // µ
+		time: "",
+		
+		file: "",
+		line: "",
+		column: "",
+		extract: "",
 	},
 };
 

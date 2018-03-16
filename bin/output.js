@@ -107,8 +107,32 @@ function updateStats (key, nextStats, dontDraw = false) {
 	if (!dontDraw) draw();
 }
 
+// Shortcuts
+// =========================================================================
+
+function working (key, nextStats = {}) {
+	updateStats(key, { status: STATUSES.WORKING, ...nextStats, });
+}
+
+function success (key, nextStats = {}) {
+	updateStats(key, { status: STATUSES.SUCCESS, ...nextStats, });
+}
+
+function warning (key, nextStats = {}) {
+	updateStats(key, { status: STATUSES.WARNING, ...nextStats, });
+}
+
+function failure (key, nextStats = {}) {
+	updateStats(key, { status: STATUSES.FAILURE, ...nextStats, });
+}
+
 module.exports = {
 	draw,
 	updateStats,
 	stats,
+	
+	working,
+	success,
+	warning,
+	failure,
 };

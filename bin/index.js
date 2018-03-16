@@ -2,6 +2,8 @@
 
 const spawn = require("cross-spawn");
 
+require("./update");
+
 function build (args) {
 	// Spawn the build process
 	const result = spawn.sync(
@@ -45,6 +47,4 @@ function build (args) {
 		default:
 			build(args);
 	}
-	
-	require("./update");
 }();
