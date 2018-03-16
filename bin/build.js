@@ -53,6 +53,8 @@ if (process.argv.slice(2)[0] === "once") {
 		}, [[/* watch */], [/* ignore */"*.map"]]);
 	}
 	
+	// Less
+	// -------------------------------------------------------------------------
 	if (!config.less.ignore) {
 		const [watch, ignored] = groupPaths(config.less.watch);
 		
@@ -65,6 +67,8 @@ if (process.argv.slice(2)[0] === "once") {
 		});
 	}
 	
+	// JS
+	// -------------------------------------------------------------------------
 	if (!config.js.ignore) {
 		const [watch, ignored] = groupPaths(config.js.watch);
 		
@@ -74,6 +78,21 @@ if (process.argv.slice(2)[0] === "once") {
 			ignorePermissionErrors: true,
 		}).on("all", () => {
 			jsCompiler.run(reload);
+		});
+	}
+	
+	// BrowserSync
+	// -------------------------------------------------------------------------
+	if (!config.browserSync.ignore) {
+		const [watch, ignored] = groupPaths(config.browserSync.watch);
+		
+		chokidar.watch(watch, {
+			ignored,
+			ignoreInitial:          true,
+			ignorePermissionErrors: true,
+		}).on("all", () => {
+			output.draw();
+			reload();
 		});
 	}
 }

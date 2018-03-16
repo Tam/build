@@ -52,6 +52,7 @@ with `!` will ignore that file, `*` are wildcards.
 
 ##### .env
 The path to your `.env` file. If you're using a hashed filename, the name will be written to the file using the `JS_FILENAME` or `CSS_FILENAME` handles.
+(This way you can use `{{ getenv('JS_FILENAME') }}` in Craft 3).
 
 ##### Output
 The both LESS & JS outputs can include a path (relative to the directory build is run in).
