@@ -92,10 +92,10 @@ module.exports = {
 				},
 			}).then(({ css, map }) => {
 				ensureDirectoryExistence(o);
-				fs.writeFileSync(o, css);
+				// We have to manually add the souremap url for some reason
+				fs.writeFileSync(o, css + `\r\n/*# sourceMappingURL=${path.basename(o)}.map */`);
 				if (map) fs.writeFileSync(o + ".map", map);
 				
-				console.log(o);
 				env(o, "less");
 				reload && reload();
 				
