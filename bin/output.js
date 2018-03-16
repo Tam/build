@@ -78,20 +78,27 @@ function draw () {
 		if (s.ignored)
 			continue;
 		
+		let hasOutput = false;
+		
 		switch (s.status) {
 			case STATUSES.FAILURE:
 				console.log(
 					chalk.bold.red(s.name + " Errors:")
 				);
 				console.log(s.errors);
+				hasOutput = true;
 				break;
 			case STATUSES.WARNING:
 				console.log(
 					chalk.bold.keyword("orange")(s.name + " Warnings:")
 				);
 				console.log(s.warnings);
+				hasOutput = true;
 				break;
 		}
+		
+		if (i !== l - 1 && hasOutput)
+			console.log(chalk.gray("- - - - -\n"));
 	}
 }
 
