@@ -1,4 +1,5 @@
 const fs = require("fs")
+	, path = require("path")
 	, config = require("../const").config
 	, getPath = require("./getPath");
 
@@ -29,6 +30,11 @@ try {
 		config.__hasError = err.message;
 	}
 }
+
+// Ensure the output path is relative
+// TODO: Allow user to specify output.path & output.filename (for less & js)
+if (~config.js.output.indexOf("/"))
+	config.js.output = path.basename(config.js.output);
 
 cachedConfig = config;
 module.exports = config;
