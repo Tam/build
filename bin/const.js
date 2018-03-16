@@ -41,6 +41,7 @@ const consts = {
 	STATUSES,
 	
 	DEFAULT_STAT: {
+		name: "",
 		ignored: false,
 		status: STATUSES.SUCCESS,
 		errors: "",

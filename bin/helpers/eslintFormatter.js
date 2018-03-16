@@ -56,7 +56,7 @@ function formatter(results) {
 		let outputTable = table(messages, {
 			align: ['l', 'l', 'l'],
 			stringLength(str) {
-				return chalk.stripColor(str).length;
+				return chalk.reset(str).length;
 			},
 		});
 		

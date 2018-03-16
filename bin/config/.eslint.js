@@ -9,6 +9,7 @@ module.exports = {
 		eqeqeq: [1, "smart"],
 		semi: [1, "always"],
 		"no-loop-func": [2],
+		"no-unused-vars": [1],
 		"no-console": [1],
 		"no-mixed-spaces-and-tabs": [0],
 	},
