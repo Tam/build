@@ -8,6 +8,7 @@ const STATUSES = CONSTS.STATUSES
 	, prettyTime = require("pretty-hrtime")
 	, config = require("./helpers/loadConfig");
 
+// Default stats
 const stats = {
 	less: Object.assign({}, DEFAULT_STAT, {
 		name: "LESS",
@@ -20,9 +21,55 @@ const stats = {
 	}),
 };
 
-function draw () {
-	clearConsole();
+/**
+ * Formats the given error
+ *
+ * @param {Object} err
+ * @returns {string}
+ */
+function formatError (err) {
+	let e = err.message;
 	
+	if (err.hasOwnProperty("file"))
+		e += " " + err.file;
+	
+	if (err.hasOwnProperty("line") && err.hasOwnProperty("column"))
+		e += ` (${err.line}:${err.column})`;
+	
+	if (err.hasOwnProperty("extract")) {
+		const extract = err.extract.split("\n")
+			, formattedExtract = [];
+		
+		e += "\n\n";
+		
+		for (let i = 0, l = extract.length; i < l; ++i) {
+			const line = extract[i];
+			
+			// Skip last line if empty
+			if (i === l - 1 && !line.trim())
+				continue;
+			
+			let f;
+			if (i + 1 === Math.ceil(l / 2)) f = chalk.bgBlackBright(line);
+			else f = line;
+			
+			formattedExtract.push(f);
+		}
+		
+		e += formattedExtract.join("\n");
+	}
+	
+	return e + "\n";
+}
+
+/**
+ * Update the console
+ */
+function draw () {
+	// Clear the console
+	// clearConsole();
+	
+	// Let the user know if there's no config, or a config error
 	if (config.__isDefault) {
 		console.log(
 			chalk.bold.keyword("orange")("No config file found, using default")
@@ -33,6 +80,7 @@ function draw () {
 	
 	const v = Object.values(stats);
 	
+	// Update the current running status of each task
 	let runningStatuses = [];
 	for (let i = 0, l = v.length; i < l; ++i) {
 		const s = v[i];
@@ -72,6 +120,7 @@ function draw () {
 	
 	console.log();
 	
+	// Output any errors or warnings from each task
 	for (let i = 0, l = v.length; i < l; ++i) {
 		const s = v[i];
 		
@@ -85,7 +134,7 @@ function draw () {
 				console.log(
 					chalk.bold.red(s.name + " Errors:")
 				);
-				console.log(s.errors);
+				console.log(s.errors.map(formatError).join());
 				hasOutput = true;
 				break;
 			case STATUSES.WARNING:

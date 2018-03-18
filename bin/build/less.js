@@ -62,7 +62,7 @@ async function buildLess (reload) {
 	} catch (err) {
 		// Tell the user LESS failed
 		failure("less", {
-			errors: err.message,
+			errors: [{ message: err.message }],
 			time:   trackTime.stop(),
 		});
 		
@@ -84,7 +84,6 @@ async function buildLess (reload) {
 			paths:        [lessDir],
 			relativeUrls: true,
 			sourceMap:    {},
-			strictMath:   lessConfig.options.strictMath,
 		});
 		
 		css = compiled.css;
@@ -92,17 +91,15 @@ async function buildLess (reload) {
 	} catch (err) {
 		// Tell the user LESS failed
 		failure("less", {
-			errors:  err.message,
-			file:    clearAbsPath(err.filename),
-			line:    err.line,
-			column:  err.column,
-			extract: err.extract.join("\n").replace(/\t/g, "    "),
-			time:    trackTime.stop(),
+			errors: [{
+				message: err.message,
+				file:    clearAbsPath(err.filename),
+				line:    err.line,
+				column:  err.column,
+				extract: err.extract.join("\n").replace(/\t/g, "    "),
+			}],
+			time: trackTime.stop(),
 		});
-		
-		// TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
-		// TODO:        Format errors using the new additional data        :TODO
-		// TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
 		
 		return;
 	}
@@ -144,11 +141,10 @@ async function buildLess (reload) {
 		success("less", {
 			time: trackTime.stop(),
 		});
-		
 	} catch (err) {
 		// Tell the user LESS failed
 		failure("less", {
-			errors: err.message,
+			errors: [{ message: err.message }],
 			time:   trackTime.stop(),
 		});
 	}

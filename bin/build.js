@@ -5,7 +5,7 @@ const config = require("./helpers/loadConfig")
 	, output = require("./output")
 	, chokidar = require("chokidar")
 	, lessCompiler = require("./build/less")
-	, jsCompiler = require("./build/js");
+	, jsCompiler = require("./build/js-v2");
 
 // Browser Sync
 // =========================================================================
@@ -38,7 +38,7 @@ if (process.argv.slice(2)[0] === "once") {
 		lessCompiler();
 	
 	if (!config.js.ignore)
-		jsCompiler.run();
+		jsCompiler();
 } else {
 	startBrowserSync();
 	
@@ -74,7 +74,7 @@ if (process.argv.slice(2)[0] === "once") {
 			ignoreInitial:          true,
 			ignorePermissionErrors: true,
 		}).on("all", () => {
-			jsCompiler.run(reload);
+			jsCompiler(reload);
 		});
 	}
 	
