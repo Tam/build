@@ -41,6 +41,7 @@ const caches = {};
 
 // TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
 // TODO:     Write own eslint Rollup plugin to control err/warn output     :TODO
+// TODO: github.com/TrySound/rollup-plugin-eslint/blob/master/src/index.js :TODO
 // TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::TODO
 
 // Options
