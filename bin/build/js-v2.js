@@ -174,6 +174,7 @@ async function buildJs (reload) {
 	trackTime.start();
 	
 	try {
+		// Build each input
 		for (let i = 0, l = inputs.length; i < l; ++i) {
 			const input = inputs[i]
 				, output = oddOutput ? outputs[0] : outputs[i];
