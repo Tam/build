@@ -7,7 +7,7 @@ const rollup = require("rollup").rollup
 	, commonJs = require("rollup-plugin-commonjs")
 	, babel = require("rollup-plugin-babel")
 	, uglify = require("rollup-plugin-uglify")
-	, minify = require("uglify-js").minify;
+	, minify = require("uglify-es").minify;
 
 const { working, success, warning, failure, stats } = require("../output")
 	, { STATUSES } = require("../const");
@@ -100,10 +100,13 @@ const inputOptions = {
 				require.resolve("babel-plugin-external-helpers"),
 				require.resolve("babel-plugin-transform-class-properties"),
 				require.resolve("babel-plugin-transform-object-rest-spread"),
+				require.resolve("babel-plugin-syntax-dynamic-import"),
 			],
 		}),
 		
-		uglify({}, minify)
+		uglify({
+			ecma: 8,
+		}, minify)
 	],
 	
 	onwarn: ({ message, loc, frame }) => {
@@ -156,6 +159,7 @@ async function build (i, o) {
 	const { code, map } = await bundle.generate({
 		...outputOptions,
 		file: o,
+		// dir: path.dirname(o),
 	});
 	
 	// Ensure the output directory exists
