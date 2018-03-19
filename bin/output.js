@@ -67,7 +67,7 @@ function formatError (err) {
  */
 function draw () {
 	// Clear the console
-	// clearConsole();
+	clearConsole();
 	
 	// Let the user know if there's no config, or a config error
 	if (config.__isDefault) {
@@ -141,7 +141,7 @@ function draw () {
 				console.log(
 					chalk.bold.keyword("orange")(s.name + " Warnings:")
 				);
-				console.log(s.warnings);
+				console.log(s.warnings.map(formatError).join());
 				hasOutput = true;
 				break;
 		}

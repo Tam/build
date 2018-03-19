@@ -5,7 +5,7 @@ const config = require("./helpers/loadConfig")
 	, output = require("./output")
 	, chokidar = require("chokidar")
 	, lessCompiler = require("./build/less")
-	, jsCompiler = require("./build/js-v2");
+	, jsCompiler = require("./build/js");
 
 // Browser Sync
 // =========================================================================

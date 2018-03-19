@@ -1,177 +1,220 @@
+const fs = require("fs")
+	, path = require("path");
+
+const rollup = require("rollup").rollup
+	, eslint = require("../rollup/eslint")
+	, nodeResolve = require("rollup-plugin-node-resolve")
+	, commonJs = require("rollup-plugin-commonjs")
+	, babel = require("rollup-plugin-babel")
+	, uglify = require("rollup-plugin-uglify")
+	, minify = require("uglify-js").minify;
+
+const { working, success, warning, failure, stats } = require("../output")
+	, { STATUSES } = require("../const");
+
 const jsConfig = require("../helpers/loadConfig").js
-	, STATUSES = require("../const").STATUSES
-	, getPath = require("../helpers/getPath")
 	, trackTime = require("../helpers/trackTime")()
 	, env = require("../helpers/env")
-	, createCompiler = require("../helpers/createCompiler")
-	, eslintFormatter = require("../helpers/eslintFormatter")
+	, getPath = require("../helpers/getPath")
 	, hashFilename = require("../helpers/hashFilename")
-	, path = require("path")
-	, fs = require("fs")
-	, output = require("../output")
-	, webpack = require("webpack")
-	, UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence");
 
-// Force production
-process.env.NODE_ENV = "production";
+// File I/O
+const hasMultipleInputs = Array.isArray(jsConfig.input);
+const inputs = (
+	hasMultipleInputs ? jsConfig.input : [jsConfig.input]
+).map(p => getPath(p));
+const outputs = (
+	hasMultipleInputs
+		? Array.isArray(jsConfig.output)
+			? jsConfig.output
+			: [
+				~jsConfig.output.indexOf("[name]")
+			        ? jsConfig.output
+			        : path.basename(jsConfig.output) + "[name].min.js"
+			]
+		: [jsConfig.output]
+).map(p => getPath(p));
 
-// I/O
-let i, o;
+const oddOutput = inputs.length !== outputs.length;
 
-const prefixRel = s => (s[0] + s[1] !== "./" ? "./" : "") + s;
+// Caches
+const caches = {};
 
-if (Array.isArray(jsConfig.input)) {
-	i = jsConfig.input.reduce((a, b) => {
-		a[path.basename(b, ".js")] = prefixRel(b);
-		return a;
-	}, {});
-	o = ~jsConfig.output.indexOf("[name]")
-		? jsConfig.output
-		: path.dirname(getPath(jsConfig.input)) + "[name].bundle.js";
-} else {
-	i = prefixRel(jsConfig.input);
-	o = jsConfig.output;
-}
-
-let op = path.dirname(getPath(jsConfig.output));
-
-const compiler = createCompiler("js", webpack, {
-	context: getPath(),
-	entry: i,
-	output: {
-		// We'll manage filename hashing so we an keep track of it
-		filename: path.basename(o),
-		path: op,
-	},
-	mode: "production",
-	devtool: "source-map",
-	module: {
-		rules: [
-			// Disable require.ensure as it's not a standard language feature.
-			{ parser: { requireEnsure: false } },
-			
-			// Lint
-			{
-				test: /\.js$/,
-				enforce: 'pre',
-				use: [
-					{
-						options: {
-							formatter: eslintFormatter,
-							eslintPath: require.resolve("eslint"),
-							configFile: path.resolve(__dirname, "../config/.eslint.js"),
-							cache: true,
-						},
-						loader: require.resolve("eslint-loader"),
-					},
-				],
-				exclude: /node_modules/,
-			},
-			// Process JS
-			{
-				test: /\.js$/,
-				exclude: /node_modules/,
-				use: [
-					// This loader parallelizes code compilation, it is optional
-					// but improves compile time on larger projects
-					require.resolve('thread-loader'),
-					// Babel
-					{
-						loader: require.resolve('babel-loader'),
-						options: {
-							babelrc: false,
-							compact: false,
-							presets: [
-								[
-									require.resolve("babel-preset-env"),
-									{
-										"targets": {
-											"browsers": [
-												"last 2 versions",
-												"safari >= 7",
-												"ie >= 10"
-											]
-										},
-										"modules": false
-									}
-								]
-							],
-							plugins: [
-								require.resolve("babel-plugin-transform-class-properties"),
-								require.resolve("babel-plugin-transform-object-rest-spread"),
-							],
-							cacheDirectory: true,
-							highlightCode: true,
-						},
-					},
-				],
-			},
-		],
-	},
+// Options
+const inputOptions = {
+	experimentalDynamicImport: true,
+	experimentalCodeSplitting: true,
+	
 	plugins: [
-		// Minify the code.
-		new UglifyJsPlugin({
-			uglifyOptions: {
-				ecma: 8,
-				compress: {
-					warnings: false,
-					// Disabled because of an issue with Uglify breaking seemingly valid code:
-					// https://github.com/facebook/create-react-app/issues/2376
-					// Pending further investigation:
-					// https://github.com/mishoo/UglifyJS2/issues/2011
-					comparisons: false,
-				},
-				mangle: {
-					safari10: true,
-				},
-				output: {
-					comments: false,
-					// Turned on because emoji and regex is not minified properly using default
-					// https://github.com/facebook/create-react-app/issues/2488
-					ascii_only: true,
-				},
+		eslint(trackTime, {
+			parserOptions: {
+				ecmaVersion: 7,
+				sourceType: "module"
 			},
-			// Use multi-process parallel running to improve the build speed
-			// Default number of concurrent runs: os.cpus().length - 1
-			parallel: true,
-			// Enable file caching
-			cache: true,
-			sourceMap: true,
+			extends: "eslint:recommended",
+			parser: "babel-eslint",
+			rules: {
+				eqeqeq: [1, "smart"],
+				semi: [1, "always"],
+				"no-loop-func": [2],
+				"no-unused-vars": [1],
+				"no-console": [1],
+				"no-mixed-spaces-and-tabs": [0],
+			},
+			env: {
+				browser: true,
+				es6: true,
+			},
 		}),
+		
+		nodeResolve({
+			module:  true,
+			jsnext:  true,
+			main:    true,
+			browser: true,
+		}),
+		
+		commonJs({
+			include: "node_modules/**",
+		}),
+		
+		babel({
+			babelrc: false,
+			presets: [
+				[
+					require.resolve("babel-preset-env"),
+					{
+						targets: {
+							browsers: [
+								"last 2 versions",
+								"safari >= 7",
+								"ie >= 10"
+							]
+						},
+						modules: false,
+					}
+				]
+			],
+			plugins: [
+				require.resolve("babel-plugin-external-helpers"),
+				require.resolve("babel-plugin-transform-class-properties"),
+				require.resolve("babel-plugin-transform-object-rest-spread"),
+			],
+		}),
+		
+		uglify({}, minify)
 	],
-});
-
-module.exports = {
-	run: function (reload) {
-		if (output.stats.js.status === STATUSES.WORKING)
-			return;
-		
-		trackTime.start();
-		
-		output.updateStats("js", {
-			status: STATUSES.WORKING,
+	
+	onwarn: ({ message, loc, frame }) => {
+		failure("js", {
+			errors: [{
+				message,
+				file:    loc.file,
+				line:    loc.line,
+				column:  loc.column,
+				extract: frame ? frame.replace(/\t/g, "    ") : "",
+			}],
+			time: trackTime.stop(),
 		});
 		
-		// Run the compiler
-		compiler.run((err, stats) => {
-			output.updateStats("js", {
-				time: trackTime.stop(),
-			});
-			
-			if (err || stats.hasErrors())
-				return;
-			
-			const hashedFilename = hashFilename(o, stats.hash);
-			const map = getPath(hashedFilename) + ".map";
-			
-			// Fix the sourcemap
-			fs.exists(map, () => {
-				const m = fs.readFileSync(map, { format: "utf8" }).toString();
-				fs.writeFileSync(map, m.replace(',"sourceRoot":""', ""));
-			});
-			
-			env(hashedFilename, "js");
-			reload && reload();
-		});
+		throw new Error("__ignore__");
 	},
 };
+
+const outputOptions = {
+	format: "es",
+	sourcemap: true,
+};
+
+/**
+ * Build
+ *
+ * @param {string} i
+ * @param {string} o
+ * @returns {Promise<void>}
+ */
+async function build (i, o) {
+	// Replace [name]
+	if (~o.indexOf("[name]"))
+		o = o.replace("[name]", path.basename(i, ".js"));
+	
+	// Hash the output filename
+	o = hashFilename(o);
+	
+	// Create a bundle
+	const bundle = await rollup({
+		...inputOptions,
+		input: i,
+		cache: caches.hasOwnProperty(i) ? caches[i] : null,
+	});
+	
+	// Cache the bundle for future builds
+	caches[i] = bundle;
+	
+	// Generate the code
+	const { code, map } = await bundle.generate({
+		...outputOptions,
+		file: o,
+	});
+	
+	// Ensure the output directory exists
+	ensureDirectoryExistence(o);
+	
+	// Write compiled JS & Source Map to disk
+	fs.writeFileSync(
+		o,
+		code + `//# sourceMappingURL=${path.basename(o)}.map`
+	);
+	fs.writeFileSync(o + ".map", map);
+	
+	// Update .env
+	env(o, "js");
+}
+
+async function buildJs (reload) {
+	if (stats.js.status === STATUSES.WORKING)
+		return;
+	
+	trackTime.start();
+	
+	// Tell the user JS is compiling
+	working("js");
+	
+	try {
+		// Build each input
+		for (let i = 0, l = inputs.length; i < l; ++i) {
+			const input = inputs[i]
+				, output = oddOutput ? outputs[0] : outputs[i];
+			
+			await build(input, output);
+		}
+		
+		// Reload the browser
+		reload && reload();
+		
+		if (stats.js.status === STATUSES.WARNING) {
+			// Tell the user JS compiled with warnings
+			// (which would have been defined by this point (see ../rollup/eslint)
+			warning("js", {
+				time: trackTime.stop(),
+			});
+		} else {
+			// Tell the user JS compiled successfully
+			success("js", {
+				time: trackTime.stop(),
+			});
+		}
+	} catch (err) {
+		if (err.message === "__ignore__")
+			return;
+		
+		// Tell the user JS failed
+		failure("js", {
+			errors: [{ message: err.message }],
+			time:   trackTime.stop(),
+		});
+	}
+}
+
+module.exports = buildJs;
