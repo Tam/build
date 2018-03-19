@@ -110,9 +110,9 @@ const inputOptions = {
 		failure("js", {
 			errors: [{
 				message,
-				file:    loc.file,
-				line:    loc.line,
-				column:  loc.column,
+				file:    loc ? loc.file : null,
+				line:    loc ? loc.line : null,
+				column:  loc ? loc.column : null,
 				extract: frame ? frame.replace(/\t/g, "    ") : "",
 			}],
 			time: trackTime.stop(),
