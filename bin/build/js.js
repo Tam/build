@@ -110,18 +110,15 @@ const inputOptions = {
 	],
 	
 	onwarn: ({ message, loc, frame }) => {
-		failure("js", {
-			errors: [{
+		warning("js", {
+			warnings: [{
 				message,
 				file:    loc ? loc.file : null,
 				line:    loc ? loc.line : null,
 				column:  loc ? loc.column : null,
 				extract: frame ? frame.replace(/\t/g, "    ") : "",
 			}],
-			time: trackTime.stop(),
 		});
-		
-		throw new Error("__ignore__");
 	},
 };
 
