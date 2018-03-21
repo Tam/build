@@ -50,7 +50,7 @@ function formatError (err) {
 				continue;
 			
 			let f;
-			if (i + 1 === Math.ceil(l / 2)) f = chalk.bgBlackBright(line);
+			if (i + 1 === Math.ceil((l % 2 === 0 ? l + 1 : l) / 2)) f = chalk.bgBlackBright(line);
 			else f = line;
 			
 			formattedExtract.push(f);
