@@ -135,6 +135,14 @@ async function buildCritical (reload) {
 		
 		// Close Puppeteer
 		browserPromise.then(browser => browser.close());
+		
+		// Reload the browser
+		reload && reload();
+		
+		// Tell the user Critical completed successfully
+		success("critical", {
+			time: trackTime.stop(),
+		});
 	} catch (err) {
 		failure("critical", {
 			errors: [{
@@ -142,15 +150,7 @@ async function buildCritical (reload) {
 			}],
 			time: trackTime.stop(),
 		});
-		
-		return;
 	}
-	
-	reload && reload();
-	
-	success("critical", {
-		time: trackTime.stop(),
-	});
 }
 
 module.exports = buildCritical;
