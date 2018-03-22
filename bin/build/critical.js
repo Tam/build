@@ -144,6 +144,10 @@ async function buildCritical (reload) {
 			time: trackTime.stop(),
 		});
 	} catch (err) {
+		// Close Puppeteer
+		browserPromise.then(browser => browser.close()).catch(() => {});
+		
+		// Tell the user Critical failed
 		failure("critical", {
 			errors: [{
 				message: err.message,
