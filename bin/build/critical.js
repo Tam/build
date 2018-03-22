@@ -143,8 +143,6 @@ async function buildCritical (reload) {
 			time: trackTime.stop(),
 		});
 		
-		console.log("ERROR:", err);
-		
 		return;
 	}
 	
