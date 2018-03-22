@@ -19,6 +19,11 @@ const stats = {
 		name: "JS",
 		ignored: config.js.ignore,
 	}),
+	
+	critical: Object.assign({}, DEFAULT_STAT, {
+		name: "Critical",
+		ignored: config.critical.ignore,
+	}),
 };
 
 /**

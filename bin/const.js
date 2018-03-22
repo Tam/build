@@ -24,7 +24,7 @@ const consts = {
 			],
 		},
 		critical: {
-			ignore: false,
+			ignore: true,
 			base: "LOCAL_URL.dev",
 			output: "craft/templates/_critical",
 			paths: {

@@ -5,7 +5,8 @@ const config = require("./helpers/loadConfig")
 	, output = require("./output")
 	, chokidar = require("chokidar")
 	, lessCompiler = require("./build/less")
-	, jsCompiler = require("./build/js");
+	, jsCompiler = require("./build/js")
+	, criticalCompiler = require("./build/critical");
 
 // Browser Sync
 // =========================================================================
@@ -34,11 +35,18 @@ const startBrowserSync = () => {
 output.draw();
 
 if (process.argv.slice(2)[0] === "once") {
-	if (!config.less.ignore)
-		lessCompiler();
+	async function once () {
+		if (!config.less.ignore)
+			await lessCompiler();
+		
+		if (!config.js.ignore)
+			await jsCompiler();
+		
+		if (!config.critical.ignore)
+			await criticalCompiler();
+	}
 	
-	if (!config.js.ignore)
-		jsCompiler();
+	once();
 } else {
 	startBrowserSync();
 	

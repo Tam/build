@@ -30,7 +30,7 @@ Create a `.buildrc` file to configure
 		]
 	},
 	"critical": {
-		"ignore": false,
+		"ignore": true,
 		"base": "LOCAL_URL.dev",
 		"output": "craft/templates/_critical",
 		"paths": {
@@ -50,6 +50,9 @@ Create a `.buildrc` file to configure
 URL's must be relative to the directory `build` is being run in. Prefixing a url
 with `!` will ignore that file, `*` are wildcards.
 
+##### Critical CSS
+Critical CSS will only run when using `build once` (and it's not ignored).
+
 ##### .env
 The path to your `.env` file. If you're using a hashed filename, the name will be written to the file using the `JS_FILENAME` or `CSS_FILENAME` handles.
 (This way you can use `{{ getenv('JS_FILENAME') }}` in Craft 3).
@@ -59,6 +62,26 @@ The both LESS & JS outputs can include a path (relative to the directory build i
 
 They can also include random hash generation (for cache breaking). 
 `"output": "public/assets/build/app.[hash:5].min.js"`
+
+
+#### Environment based config
+You can have a single `.buildrc` file handle multiple node environments. Just nest your configs in objects keyed with the environment name.
+You must have the `"*"` global environment for this to work. Missing options will fallback to the global environment, then to the default config.
+
+```json
+{
+	"*": {
+		"//": "Your global config goes here"
+	},
+	"production": {
+		"//": "Your production environment config goes here"
+	}
+}
+```
+
+When running build, ensure you set the environment you want to use before hand:
+
+`NODE_ENV=production build once`
 
 ### Multiple JS files
 
@@ -97,6 +120,11 @@ You can build multiple separate JS files by passing an array of paths to the
 - Fixes CommonJS shit
 - Opinionated Babel ES6 -> ES5 compile
 - Uglifies & Minifies
+
+### Critical CSS
+- Only runs on `build once`.
+- Extracts critical CSS from the given pages.
+- Will write to the `critical.output` directory (using the path key as the css filename).
 
 ### BrowserSync
 - Reloads the browser (at `proxy:3000`) whenever any file in `watch` changes 

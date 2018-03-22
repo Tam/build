@@ -9,39 +9,70 @@ if (cachedConfig) {
 	return;
 }
 
+/**
+ * Will merge b into a
+ *
+ * @param a
+ * @param b
+ * @return {*}
+ */
+function merge (a, b) {
+	const c = {...a};
+	
+	const keys = Object.keys(c);
+	
+	for (let i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		
+		if (b.hasOwnProperty(key)) {
+			if (typeof b[key] === typeof {}) {
+				c[key] = Object.assign(c[key], b[key]);
+				
+				if (b[key].hasOwnProperty("options")) {
+					c[key].options = {
+						...c[key].options,
+						...b[key].options,
+					};
+				}
+			} else {
+				c[key] = b[key];
+			}
+		}
+	}
+	
+	return c;
+}
+
+let nextConfig = config;
+
 // Load and parse `.buildrc` or fall back to the default config
 try {
 	// Attempt to load & parse the file
 	let customConfig = JSON.parse(fs.readFileSync(getPath(".buildrc")));
 	
-	// Merge shallow for each config group (i.e. less, js, etc.)
-	const keys = Object.keys(config);
-	for (let i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		if (customConfig.hasOwnProperty(key)) {
-			if (typeof customConfig[key] === typeof {}) {
-				config[key] = Object.assign(config[key], customConfig[key]);
-				if (customConfig[key].hasOwnProperty("options")) {
-					config[key].options = {
-						...config[key].options,
-						...customConfig[key].options,
-					};
-				}
-			} else {
-				config[key] = customConfig[key];
-			}
-		}
+	// Is this a multi-env config?
+	if (customConfig.hasOwnProperty("*")) {
+		if (customConfig.hasOwnProperty(process.env.NODE_ENV)) {
+			customConfig = merge(
+				merge(config, customConfig["*"]),
+				customConfig[process.env.NODE_ENV]
+			);
+		} else
+			customConfig = customConfig["*"];
 	}
+	
+	// Merge shallow for each config group (i.e. less, js, etc.)
+	nextConfig = merge(nextConfig, customConfig);
 	
 } catch (err) {
 	// If we don't have a file
 	if (err.message.indexOf("no such file") > -1) {
-		config.__isDefault = true;
+		nextConfig.__isDefault = true;
 	} else {
 		// If there was a parsing error
-		config.__hasError = err.message;
+		nextConfig.__hasError = err.message;
 	}
 }
 
-cachedConfig = config;
-module.exports = config;
+cachedConfig = nextConfig;
+module.exports = nextConfig;
