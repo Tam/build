@@ -134,7 +134,7 @@ async function buildCritical (reload) {
 		]);
 		
 		// Close Puppeteer
-		browserPromise.then(browser => browser.close());
+		browserPromise.then(browser => browser.close()).catch(() => {});
 		
 		// Reload the browser
 		reload && reload();
