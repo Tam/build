@@ -23,10 +23,13 @@ function getFromUrl(get, url) {
 		const req = get(url);
 		
 		req.on('response', res => {
-			res.setEncoding('utf8');
-			res.on('data', function (body) {
+			let body = '';
+			res.on('data', function(chunk) {
+				body += chunk;
+			});
+			res.on('end', function() {
 				resolve(body);
-			})
+			});
 		});
 		
 		req.on('error', err => {
