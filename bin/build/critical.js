@@ -39,7 +39,6 @@ function getFromUrl(get, url) {
 const browserPromise = puppeteer.launch({
 	ignoreHTTPSErrors: true,
 	args: ['--disable-setuid-sandbox', '--no-sandbox', '--ignore-certificate-errors'],
-	headless: false,
 });
 
 async function buildCritical (reload) {
