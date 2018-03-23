@@ -46,7 +46,11 @@ if (process.argv.slice(2)[0] === "once") {
 			await criticalCompiler();
 	}
 	
-	once().catch(() => { /* Eh. */ });
+	once().then(() => {
+		process.exit();
+	}).catch(() => {
+		process.exit();
+	});
 } else {
 	startBrowserSync();
 	
