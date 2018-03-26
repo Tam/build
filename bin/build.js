@@ -12,10 +12,20 @@ const config = require("./helpers/loadConfig")
 // =========================================================================
 
 const browserSync = require("browser-sync").create();
+let lastReloadTime = process.hrtime();
 
 const reload = () => {
-	if (!config.browserSync.ignore)
-		browserSync.reload();
+	if (config.browserSync.ignore)
+		return;
+	
+	// If the last time we tried to reload was a second ago (or less),
+	// don't reload again
+	if (process.hrtime(lastReloadTime)[0] <= 1)
+		return;
+	
+	lastReloadTime = process.hrtime();
+	
+	browserSync.reload();
 };
 
 const startBrowserSync = () => {
