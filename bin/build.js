@@ -54,11 +54,11 @@ if (process.argv.slice(2)[0] === "once") {
 		
 		if (!config.critical.ignore)
 			await criticalCompiler();
+		
+		process.exit();
 	}
 	
-	once().then(() => {
-		process.exit();
-	}).catch(() => {
+	once().catch(() => {
 		process.exit();
 	});
 } else {
