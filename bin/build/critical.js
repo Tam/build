@@ -71,7 +71,6 @@ const browserPromise = puppeteer.launch({
 		"--disable-setuid-sandbox",
 		"--no-sandbox",
 		"--ignore-certificate-errors",
-		"--ignore-certificate-errors-spki-list",
 	],
 });
 
@@ -157,6 +156,13 @@ async function buildCritical (reload) {
 			// Continue until we run out of URLs
 			return startNewJob();
 		}
+		
+		// Make an initial request to bypass SSL errors
+		// Temp fix for https://github.com/GoogleChrome/puppeteer/issues/1159
+		const browser = await browserPromise;
+		const page = await browser.newPage();
+		await page.setViewport({width: 1300, height: 1000});
+		await page.goto(base);
 		
 		// Run 5 Critical CSS extractions in parallel
 		await Promise.all([
