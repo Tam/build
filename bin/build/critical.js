@@ -1,4 +1,5 @@
 const fs = require("fs")
+	, { URL } = require("url")
 	, path = require("path")
 	, http = require("http")
 	, https = require("https")
@@ -18,7 +19,7 @@ const criticalConfig = require("../helpers/loadConfig").critical
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Get from URL
-function getFromUrl(get, url) {
+function getFromUrl(get, url, isCss = false) {
 	return new Promise ((resolve, reject) => {
 		const req = get(url);
 		
@@ -28,6 +29,31 @@ function getFromUrl(get, url) {
 				body += chunk;
 			});
 			res.on('end', function() {
+				// If CSS normalize relative URLs
+				if (isCss) {
+					const dir = url.substring(0, url.lastIndexOf('/')) + "/"
+						, regex = /url\(\s*[\'"]?\/?(.+?)[\'"]?\s*\)/ig;
+					
+					let m;
+					
+					while ((m = regex.exec(body)) !== null) {
+						if (m.index === regex.lastIndex)
+							regex.lastIndex++;
+						
+						m.forEach((match, groupIndex) => {
+							if (groupIndex !== 1)
+								return;
+							
+							if (~match.indexOf("./")) {
+								body = body.replace(
+									match,
+									(new URL(dir + match).href)
+								);
+							}
+						});
+					}
+				}
+				
 				resolve(body);
 			});
 		});
@@ -83,7 +109,7 @@ async function buildCritical (reload) {
 			if (url.indexOf("http") === -1)
 				url = base + url;
 			
-			cssString += await getFromUrl(get, url);
+			cssString += await getFromUrl(get, url, true);
 		}
 		
 		// Convert our template => url object into an array
