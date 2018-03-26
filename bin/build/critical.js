@@ -67,7 +67,12 @@ function getFromUrl(get, url, isCss = false) {
 // Custom Puppeteer
 const browserPromise = puppeteer.launch({
 	ignoreHTTPSErrors: true,
-	args: ['--disable-setuid-sandbox', '--no-sandbox', '--ignore-certificate-errors'],
+	args: [
+		"--disable-setuid-sandbox",
+		"--no-sandbox",
+		"--ignore-certificate-errors",
+		"--ignore-certificate-errors-spki-list",
+	],
 });
 
 async function buildCritical (reload) {
