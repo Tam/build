@@ -47,7 +47,7 @@ function getFromUrl(get, url, isCss = false) {
 							if (~match.indexOf("./")) {
 								body = body.replace(
 									match,
-									(new URL(dir + match).href)
+									new URL(dir + match).pathname
 								);
 							}
 						});
