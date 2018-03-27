@@ -11,7 +11,7 @@ const config = require("./helpers/loadConfig")
 // Browser Sync
 // =========================================================================
 
-const browserSync = require("browser-sync").create();
+let browserSync;
 let lastReloadTime = process.hrtime();
 
 const reload = () => {
@@ -29,6 +29,8 @@ const reload = () => {
 };
 
 const startBrowserSync = () => {
+	browserSync = require("browser-sync").create();
+	
 	browserSync.init({
 		// open: "external",
 		open: false,
@@ -44,24 +46,23 @@ const startBrowserSync = () => {
 
 output.draw();
 
-if (process.argv.slice(2)[0] === "once") {
-	async function once () {
-		if (!config.less.ignore)
-			await lessCompiler();
-		
-		if (!config.js.ignore)
-			await jsCompiler();
-		
-		if (!config.critical.ignore)
-			await criticalCompiler();
-		
-		process.exit();
-	}
+// Once
+// -------------------------------------------------------------------------
+
+async function once () {
+	if (!config.less.ignore)
+		await lessCompiler();
 	
-	once().catch(() => {
-		process.exit();
-	});
-} else {
+	if (!config.js.ignore)
+		await jsCompiler();
+	
+	if (!config.critical.ignore)
+		await criticalCompiler();
+	
+	process.exit();
+}
+
+function watch () {
 	startBrowserSync();
 	
 	function groupPaths (paths) {
@@ -115,3 +116,12 @@ if (process.argv.slice(2)[0] === "once") {
 		});
 	}
 }
+
+module.exports = async function build (buildOnce = false) {
+	if (buildOnce) {
+		await once();
+		process.exit();
+	} else {
+		watch();
+	}
+};

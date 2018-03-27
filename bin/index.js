@@ -1,8 +1,10 @@
 #! /usr/bin/env node
 
+const build = require("./build");
+
 require("./update");
 
-!function () {
+!async function () {
 	const args = process.argv.slice(2);
 	
 	switch (args[0]) {
@@ -10,7 +12,10 @@ require("./update");
 			require("./init");
 			return;
 		case "once":
+			await build(true);
+			process.exit();
+			return;
 		default:
-			require("./build");
+			await build();
 	}
 }();

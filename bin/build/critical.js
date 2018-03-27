@@ -3,6 +3,7 @@ const fs = require("fs")
 	, path = require("path")
 	, http = require("http")
 	, https = require("https")
+	, chalk = require("chalk")
 	, cheerio = require("cheerio")
 	, penthouse = require("penthouse")
 	, puppeteer = require("puppeteer");
@@ -64,21 +65,22 @@ function getFromUrl(get, url, isCss = false) {
 	});
 }
 
-// Custom Puppeteer
-const browserPromise = puppeteer.launch({
-	ignoreHTTPSErrors: true,
-	args: [
-		"--disable-setuid-sandbox",
-		"--no-sandbox",
-		"--ignore-certificate-errors",
-	],
-});
-
-async function buildCritical (reload) {
+async function buildCritical () {
 	if (stats.critical.stats === STATUSES.WORKING)
 		return;
 	
 	trackTime.start();
+	
+	// Custom Puppeteer
+	const browserPromise = puppeteer.launch({
+		ignoreHTTPSErrors: true,
+		args: [
+			"--disable-setuid-sandbox",
+			"--no-sandbox",
+			"--ignore-certificate-errors",
+		],
+		// headless: false,
+	});
 	
 	// Tell the user Critical is generating
 	working("critical");
@@ -139,6 +141,8 @@ async function buildCritical (reload) {
 			
 			const { url, template } = u;
 			
+			console.log(chalk.grey("Starting"), template);
+			
 			// Generate the critical CSS
 			const css = await penthouse({
 				url,
@@ -153,16 +157,20 @@ async function buildCritical (reload) {
 				css
 			);
 			
+			console.log(chalk.grey("Finished"), template);
+			
 			// Continue until we run out of URLs
 			return startNewJob();
 		}
 		
 		// Make an initial request to bypass SSL errors
 		// Temp fix for https://github.com/GoogleChrome/puppeteer/issues/1159
+		console.log(chalk.grey("Pre-loading"));
 		const browser = await browserPromise;
 		const page = await browser.newPage();
 		await page.setViewport({width: 1300, height: 1000});
-		await page.goto(base);
+		await page.goto(base, { waitUntil: "networkidle0" });
+		console.log(chalk.grey("Pre-load complete"));
 		
 		// Run 5 Critical CSS extractions in parallel
 		await Promise.all([
@@ -174,10 +182,7 @@ async function buildCritical (reload) {
 		]);
 		
 		// Close Puppeteer
-		browserPromise.then(browser => browser.close()).catch(() => {});
-		
-		// Reload the browser
-		reload && reload();
+		browser.close();
 		
 		// Tell the user Critical completed successfully
 		success("critical", {
@@ -185,7 +190,8 @@ async function buildCritical (reload) {
 		});
 	} catch (err) {
 		// Close Puppeteer
-		browserPromise.then(browser => browser.close()).catch(() => {});
+		const browser = await browserPromise;
+		browser.close();
 		
 		// Tell the user Critical failed
 		failure("critical", {
