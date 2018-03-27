@@ -74,12 +74,12 @@ async function buildCritical () {
 	// Custom Puppeteer
 	const browserPromise = puppeteer.launch({
 		ignoreHTTPSErrors: true,
-		args: [
+		args:              [
 			"--disable-setuid-sandbox",
 			"--no-sandbox",
 			"--ignore-certificate-errors",
 		],
-		// headless: false,
+		headless: process.argv.slice(3)[0] !== "--not-headless",
 	});
 	
 	// Tell the user Critical is generating
