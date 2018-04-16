@@ -15,13 +15,14 @@ const lessConfig = require("../helpers/loadConfig").less
 	, ensureDirectoryExistence = require("../helpers/ensureDirectoryExistence");
 
 // File I/O
-const input  = getPath(lessConfig.input)
-	, output = getPath(lessConfig.output, "style.css");
+const isMultiple = Array.isArray(lessConfig.input);
 
-const lessDir = path.dirname(input)
-	, lessFile = path.basename(input);
+if (isMultiple && (!Array.isArray(lessConfig.output) || lessConfig.input.length !== lessConfig.output.length)) {
+	throw new Error("Less input array and output array must match in length.");
+}
 
-const clearAbsPath = s => s.replace(lessDir + "/", "");
+const input  = isMultiple ? lessConfig.input.map(i => getPath(i)) : [getPath(lessConfig.input)]
+	, output = isMultiple ? lessConfig.output.map(o => getPath(o)) : [getPath(lessConfig.output, "style.css")];
 
 // Initialize PostCSS
 const postCssProcessor = postCss([
@@ -39,20 +40,14 @@ const postCssProcessor = postCss([
 	require("cssnano"),
 ]);
 
-/**
- * Compile the LESS into CSS
- */
-async function buildLess (reload) {
-	if (stats.less.status === STATUSES.WORKING)
-		return;
+async function compileLess (input, output) {
+	const lessDir = path.dirname(input)
+		, lessFile = path.basename(input);
 	
-	trackTime.start();
+	const clearAbsPath = s => s.replace(lessDir + "/", "");
 	
 	// Hash the filename
 	const outputFile = hashFilename(output);
-	
-	// Tell the user LESS is compiling
-	working("less");
 	
 	// Load the LESS into a string
 	let rawLess;
@@ -66,7 +61,7 @@ async function buildLess (reload) {
 			time:   trackTime.stop(),
 		});
 		
-		return;
+		throw new Error("__HANDLED__");
 	}
 	
 	// Manually clear LESS caches
@@ -101,7 +96,7 @@ async function buildLess (reload) {
 			time: trackTime.stop(),
 		});
 		
-		return;
+		throw new Error("__HANDLED__");
 	}
 	
 	// Fix source map, making all paths relative
@@ -110,29 +105,45 @@ async function buildLess (reload) {
 	map = JSON.stringify(map);
 	
 	// Run through PostCSS
+	const compiled = await postCssProcessor.process(css, {
+		from: input,
+		to:   outputFile,
+		map:  { inline: false, prev: map, },
+	});
+	
+	css = compiled.css;
+	map = compiled.map;
+	
+	// Ensure the output directory exists
+	ensureDirectoryExistence(outputFile);
+	
+	// Write compiled CSS & Source Map to disk
+	fs.writeFileSync(
+		outputFile,
+		css + `\r\n/*# sourceMappingURL=${path.basename(outputFile)}.map */`
+	);
+	
+	fs.writeFileSync(outputFile + ".map", map);
+	
+	// Update .env
+	env(outputFile, isMultiple ? `less_${lessFile.replace(".less", "")}` : "less");
+}
+
+/**
+ * Compile the LESS into CSS
+ */
+async function buildLess (reload) {
+	if (stats.less.status === STATUSES.WORKING)
+		return;
+	
+	trackTime.start();
+	
+	// Tell the user LESS is compiling
+	working("less");
+	
 	try {
-		const compiled = await postCssProcessor.process(css, {
-			from: input,
-			to:   outputFile,
-			map:  { inline: false, prev: map, },
-		});
-		
-		css = compiled.css;
-		map = compiled.map;
-		
-		// Ensure the output directory exists
-		ensureDirectoryExistence(outputFile);
-		
-		// Write compiled CSS & Source Map to disk
-		fs.writeFileSync(
-			outputFile,
-			css + `\r\n/*# sourceMappingURL=${path.basename(outputFile)}.map */`
-		);
-		
-		fs.writeFileSync(outputFile + ".map", map);
-		
-		// Update .env
-		env(outputFile, "less");
+		// For each input
+		input.map(async (input, i) => await compileLess(input, output[i]));
 		
 		// Reload the browser
 		reload && reload();
@@ -142,6 +153,9 @@ async function buildLess (reload) {
 			time: trackTime.stop(),
 		});
 	} catch (err) {
+		if (err.message === "__HANDLED__")
+			return;
+		
 		// Tell the user LESS failed
 		failure("less", {
 			errors: [{ message: err.message }],
