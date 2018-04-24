@@ -7,7 +7,7 @@ const STATUSES = {
 
 const consts = {
 	config: {
-		".env": null,
+		"manifest": null,
 		less: {
 			ignore: false,
 			input:  "public/assets/less/style.less",

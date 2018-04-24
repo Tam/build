@@ -7,8 +7,8 @@ const fs = require("fs")
 
 let env;
 
-if (config.hasOwnProperty(".env")) {
-	env = config[".env"];
+if (config.hasOwnProperty("manifest")) {
+	env = config["manifest"];
 	
 	if (env) {
 		ensureDirectoryExistence(getPath(env));
@@ -23,42 +23,36 @@ function writeToEnv (nextFile, handle) {
 	
 	const hashedFilename = path.basename(nextFile);
 	
-	handle = handle.toUpperCase() + "_FILENAME";
+	handle = handle.toLowerCase().replace(/_([a-z])/g, function (g) { return g[1].toUpperCase(); }) + "Filename";
 	let envData = fs.readFileSync(env).toString();
-	if (!envData || envData === "undefined")
-		envData = "";
-	const regex = new RegExp(`${handle}="([^"]*)"`, "g");
-	const match = regex.exec(envData);
-	const dir = path.dirname(nextFile);
-	const nextName = handle + `="${hashedFilename}"`;
-	
-	if (match) {
-		if (match[1] !== hashedFilename) {
-			envData = envData.replace(match[0], nextName);
-			const prevFile = path.join(dir, match[1]);
-			try {
-				fs.unlinkSync(prevFile);
-				fs.unlinkSync(prevFile + ".map");
-			} catch (e) {}
-		}
+	if (!envData || envData === "undefined") {
+		envData = {};
 	} else {
-		envData += "\r\n" + nextName;
+		try {
+			envData = JSON.parse(envData);
+		} catch (e) {
+			envData = {};
+		}
 	}
+	
+	const dir = path.dirname(nextFile);
+	const prev = envData[handle];
+	
+	if (prev) {
+		const prevFile = path.join(dir, prev);
+		try {
+			fs.unlinkSync(prevFile);
+			fs.unlinkSync(prevFile + ".map");
+		} catch (e) {}
+	}
+	
+	envData[handle] = hashedFilename;
 	
 	// Update CACHE
-	const cacheHandle = "CACHE_HASH";
-	const cacheHash = `${cacheHandle}="${crypto.randomBytes(5).toString("hex")}"`;
-	const cacheRegex = new RegExp(`${cacheHandle}="([^"]*)"`, "g");
-	const cacheMatch = cacheRegex.exec(envData);
+	envData.cacheHash = crypto.randomBytes(5).toString("hex");
 	
-	if (cacheMatch) {
-		envData = envData.replace(cacheMatch[0], cacheHash);
-	} else {
-		envData += "\r\n" + cacheHash;
-	}
-	
-	// Write the .env
-	fs.writeFileSync(env, envData);
+	// Write the manifest
+	fs.writeFileSync(env, JSON.stringify(envData));
 }
 
 module.exports = writeToEnv;

@@ -11,7 +11,7 @@ Create a `.buildrc` file to configure
 
 ```json
 {
-	".env": "/.env",
+	"manifest": "/manifest.json",
 	"less": {
 		"ignore": false,
 		"input": "public/assets/less/style.less",
@@ -53,9 +53,8 @@ with `!` will ignore that file, `*` are wildcards.
 ##### Critical CSS
 Critical CSS will only run when using `build once` (and it's not ignored).
 
-##### .env
-The path to your `.env` file. If you're using a hashed filename, the name will be written to the file using the `JS_FILENAME` or `CSS_FILENAME` handles.
-(This way you can use `{{ getenv('JS_FILENAME') }}` in Craft 3).
+##### Manifest
+The path to your `manifest.json` file. If you're using a hashed filename, the name will be written to the file using the `jsFilename` or `cssFilename` handles.
 
 ##### Output
 The both LESS & JS outputs can include a path (relative to the directory build is run in).
