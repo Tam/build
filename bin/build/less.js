@@ -37,7 +37,7 @@ const postCssProcessor = postCss([
 		],
 		flexbox: "no-2009",
 	}),
-	require("cssnano"),
+	require("cssnano")({ zindex: false }),
 ]);
 
 async function compileLess (input, output) {
