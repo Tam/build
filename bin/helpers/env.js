@@ -40,10 +40,14 @@ function writeToEnv (nextFile, handle) {
 	
 	if (prev) {
 		const prevFile = path.join(dir, prev);
-		try {
-			fs.unlinkSync(prevFile);
-			fs.unlinkSync(prevFile + ".map");
-		} catch (e) {}
+		
+		// Delete the old file (if the names are different)
+		if (prevFile !== nextFile) {
+			try {
+				fs.unlinkSync(prevFile);
+				fs.unlinkSync(prevFile + ".map");
+			} catch (e) {}
+		}
 	}
 	
 	envData[handle] = hashedFilename;
@@ -52,7 +56,7 @@ function writeToEnv (nextFile, handle) {
 	envData.cacheHash = crypto.randomBytes(5).toString("hex");
 	
 	// Write the manifest
-	fs.writeFileSync(env, JSON.stringify(envData));
+	fs.writeFileSync(env, JSON.stringify(envData || {}));
 }
 
 module.exports = writeToEnv;

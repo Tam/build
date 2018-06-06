@@ -46,9 +46,6 @@ async function compileLess (input, output) {
 	
 	const clearAbsPath = s => s.replace(lessDir + "/", "");
 	
-	// Hash the filename
-	const outputFile = hashFilename(output);
-	
 	// Load the LESS into a string
 	let rawLess;
 	
@@ -98,6 +95,9 @@ async function compileLess (input, output) {
 		
 		throw new Error("__HANDLED__");
 	}
+	
+	// Hash the filename
+	const outputFile = hashFilename(output, null, css);
 	
 	// Fix source map, making all paths relative
 	map = JSON.parse(map);

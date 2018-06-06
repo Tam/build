@@ -136,11 +136,9 @@ const outputOptions = {
  */
 async function build (i, o) {
 	// Replace [name]
+	const jsFile = path.basename(i, ".js");
 	if (~o.indexOf("[name]"))
 		o = o.replace("[name]", path.basename(i, ".js"));
-	
-	// Hash the output filename
-	o = hashFilename(o);
 	
 	// Create a bundle
 	const bundle = await rollup({
@@ -159,6 +157,9 @@ async function build (i, o) {
 		// dir: path.dirname(o),
 	});
 	
+	// Hash the output filename
+	o = hashFilename(o, null, code);
+	
 	// Ensure the output directory exists
 	ensureDirectoryExistence(o);
 	
@@ -170,7 +171,7 @@ async function build (i, o) {
 	fs.writeFileSync(o + ".map", map);
 	
 	// Update .env
-	env(o, "js");
+	env(o, hasMultipleInputs ? `js_${jsFile.replace(".js", "")}` : "js");
 }
 
 async function buildJs (reload) {
