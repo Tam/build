@@ -63,7 +63,8 @@ async function once () {
 }
 
 function watch () {
-	startBrowserSync();
+	if (!config.browserSync.ignore)
+		startBrowserSync();
 	
 	function groupPaths (paths) {
 		return paths.map(getPath).reduce((a, b) => {
