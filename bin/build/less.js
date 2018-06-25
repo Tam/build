@@ -36,6 +36,7 @@ const postCssProcessor = postCss([
 			"not ie < 9",
 		],
 		flexbox: "no-2009",
+		grid: true,
 	}),
 	require("cssnano")({ zindex: false }),
 ]);
