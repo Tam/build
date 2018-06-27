@@ -32,11 +32,10 @@ const startBrowserSync = () => {
 	browserSync = require("browser-sync").create();
 	
 	browserSync.init({
-		// open: "external",
 		open: false,
 		proxy: config.browserSync.proxy,
 		host: config.browserSync.proxy,
-		watchEvents: ["add", "change", "unlink", "addDir", "unlinkDir"],
+		watchEvents: [],
 		notify: false,
 	});
 };
