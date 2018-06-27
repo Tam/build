@@ -2,7 +2,7 @@
 
 const build = require("./build");
 
-require("./update");
+// require("./update");
 
 !async function () {
 	const args = process.argv.slice(2);

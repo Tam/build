@@ -63,8 +63,6 @@ async function once () {
 }
 
 function watch () {
-	startBrowserSync();
-	
 	function groupPaths (paths) {
 		return paths.map(getPath).reduce((a, b) => {
 			if (b[0] === "!") a[1].push(b.slice(1, b.length));
@@ -104,6 +102,8 @@ function watch () {
 	// BrowserSync
 	// -------------------------------------------------------------------------
 	if (!config.browserSync.ignore) {
+		startBrowserSync();
+		
 		const [watch, ignored] = groupPaths(config.browserSync.watch);
 		
 		chokidar.watch(watch, {
