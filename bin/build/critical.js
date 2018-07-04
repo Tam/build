@@ -169,7 +169,7 @@ async function buildCritical () {
 		console.log(chalk.grey("Pre-loading"));
 		const browser = await browserPromise;
 		const page = await browser.newPage();
-		await page.setViewport({width: 1300, height: 1000});
+		await page.setViewport({width: 1300, height: 1500});
 		await page.goto(base, { waitUntil: "networkidle0" });
 		console.log(chalk.grey("Pre-load complete"));
 		
