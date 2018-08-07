@@ -149,7 +149,9 @@ async function buildCritical () {
 				cssString,
 				unstableKeepBrowserAlive: true,
 				puppeteer: { getBrowser: () => browserPromise },
-				timeout: 60e3
+				timeout: 60e3,
+				width: 1300,
+				height: 1500,
 			});
 			
 			// Write the CSS to our output dir
