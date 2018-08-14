@@ -103,8 +103,7 @@ You can build multiple separate JS files by passing an array of paths to the
 ## Commands
 - `build` - Starts the watcher & build process
 - `build init` - Creates a .buildrc file containing the default config
-- `build once` - Runs the build once
-- `bulid once --not-headless` - Will run the build once, and run chrome as an app
+- `build once` - Runs the build once, sets `NODE_ENV` to "production"
 
 ## What it does
 ### LESS
