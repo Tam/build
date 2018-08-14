@@ -79,7 +79,7 @@ async function buildCritical () {
 			"--no-sandbox",
 			"--ignore-certificate-errors",
 		],
-		headless: process.argv.slice(3)[0] !== "--not-headless",
+		headless: false, // process.argv.slice(3)[0] !== "--not-headless",
 	});
 	
 	// Tell the user Critical is generating
