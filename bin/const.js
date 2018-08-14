@@ -7,34 +7,37 @@ const STATUSES = {
 
 const consts = {
 	config: {
-		"manifest": null,
+		"manifest": "manifest.json",
 		less: {
 			ignore: false,
-			input:  "public/assets/less/style.less",
-			output: "public/assets/css/style.css",
-			watch:  ["public/assets/less/**/*"],
+			input: "assets/less/style.less",
+			output: "web/assets/css/style.[hash:5].css",
+			watch: [
+				"assets/less/**/*"
+			]
 		},
 		js: {
 			ignore: false,
-			input: "public/assets/js/app.js",
-			output: "bundle.js",
+			input: "assets/js/app.js",
+			output: "web/assets/js/app.[hash:5].js",
 			watch:  [
-				"public/assets/js/**/*.js",
-				"!public/assets/js/**/bundle.js",
+				"assets/js/**/*.js"
 			],
 		},
 		critical: {
 			ignore: true,
 			base: "LOCAL_URL.dev",
-			output: "craft/templates/_critical",
+			output: "templates/_critical",
 			paths: {
-				"_templateName": "url/to/template",
+				"index": "/",
 			},
 		},
 		browserSync: {
 			ignore: false,
 			proxy: "LOCAL_URL.dev",
-			watch: ["craft/templates/**/*"],
+			watch: [
+				"templates/**/*"
+			],
 		},
 	},
 	
