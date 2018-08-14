@@ -2,6 +2,8 @@ const config = require("./const").config
 	, fs = require("fs")
 	, chalk = require("chalk");
 
+delete config.__isDefault;
+
 /**
  * Create the .buildrc file using the default config
  */
