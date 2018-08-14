@@ -12,6 +12,7 @@ const build = require("./build");
 			require("./init");
 			return;
 		case "once":
+			process.env.NODE_ENV = "production";
 			await build(true);
 			process.exit();
 			return;
