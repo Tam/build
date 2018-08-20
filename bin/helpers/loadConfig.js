@@ -25,7 +25,7 @@ function merge (a, b) {
 		const key = keys[i];
 		
 		if (b.hasOwnProperty(key)) {
-			if (typeof b[key] === typeof {}) {
+			if (b[key] && typeof b[key] === typeof {}) {
 				c[key] = Object.assign(c[key], b[key]);
 				
 				if (b[key].hasOwnProperty("options")) {
