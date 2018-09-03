@@ -93,6 +93,7 @@ const inputOptions = {
 							]
 						},
 						modules: false,
+						useBuiltIns: "usage",
 					}
 				]
 			],
