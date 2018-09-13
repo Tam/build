@@ -1,17 +1,14 @@
 const deepmerge = require("deepmerge");
 
-let config = require("./config");
+let config;
 
 try {
-	config = deepmerge(
-		config,
-		require(process.cwd() + "/build.config.js")
-	);
+	config = require(process.cwd() + "/build.config.js");
 } catch (e) {
-	config = deepmerge(
-		config,
-		require("./default")
-	);
+	config = require("./default");
 }
 
-module.exports = config;
+module.exports = deepmerge(
+	require("./config"),
+	config
+);
