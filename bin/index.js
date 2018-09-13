@@ -6,9 +6,10 @@
 			require("./init");
 			return;
 		case "once":
-			// TODO: Production build
+			process.env.NODE_ENV = "production";
+			require("./build");
 			return;
 		default:
-			// TODO: Development build / watch
+			require("./build");
 	}
 }();

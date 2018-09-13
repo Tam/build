@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.1",
+    "deepmerge": "^2.1.1",
     "inquirer": "^6.2.0"
   }
 }

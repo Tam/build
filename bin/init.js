@@ -17,7 +17,7 @@ const chalk = require("chalk")
 	}
 
 	const defaultConfig = fs.readFileSync(
-		__dirname + "/default.config.js",
+		__dirname + "/config/default.js",
 		"utf8"
 	);
 
