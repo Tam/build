@@ -38,6 +38,7 @@ module.exports = {
 		// See https://webpack.js.org/configuration/output/
 		// for supported output configs
 		output: {
+			path: process.cwd() + "/web/assets/js",
 			filename: "[name].[hash:5].js",
 		},
 	},
