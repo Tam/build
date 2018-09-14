@@ -1,3 +1,6 @@
-const config = require("./config");
+const config = require("./config")
+	, Output = require("./output");
 
-console.log(config);
+const output = new Output(config);
+
+//
