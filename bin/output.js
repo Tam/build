@@ -35,7 +35,7 @@ class Output {
 			this._critical.name = "Critical";
 		}
 
-		this._render();
+		this.render();
 	}
 
 	// Runners
@@ -76,7 +76,7 @@ class Output {
 		this[runner].warnings = [];
 		this[runner].errors = [];
 
-		this._render();
+		this.render();
 	}
 
 	message (runner, type, message) {
@@ -85,20 +85,20 @@ class Output {
 		else
 			this[runner][type].push(message);
 
-		this._render();
+		this.render();
 	}
 
 	complete (runner) {
 		this[runner].running = false;
 		this[runner].runTime = this[runner].timer.stop();
 
-		this._render();
+		this.render();
 	}
 
 	// Renderer
 	// =========================================================================
 
-	_render () {
+	render () {
 		// Clear console
 		process.stdout.write(
 			process.platform === 'win32' ? '\x1B[2J\x1B[0f' : '\x1B[2J\x1B[3J\x1B[H'
@@ -109,16 +109,16 @@ class Output {
 
 		// Running statuses
 		const runningStatuses = runners.map(runner => {
-			let icon = chalk.bold.gray("○");
+			let icon = chalk.bold.gray("○"),
+				time = chalk.gray("Not run");
 
 			if (runner.running) icon = chalk.bold.yellow("►");
 			else if (runner.errors.length) icon = chalk.bold.red("✘");
 			else if (runner.warnings.length) icon = chalk.bold.yellow("!");
-			else icon = chalk.bold.green("✓");
-
-			let time = chalk.gray("Not run");
-			if (runner.runTime)
+			else if (runner.runTime) {
+				icon = chalk.bold.green("✓");
 				time = chalk.cyanBright(prettyTime(runner.runTime));
+			}
 
 			return [
 				icon,
@@ -137,13 +137,15 @@ class Output {
 		console.log(/* Divider */);
 
 		// Messages
-		runners.map((runner, i) => {
+		runners.map(runner => {
 			if (runner.errors.length) {
 				console.log(
 					chalk.bold.red(runner.name + " Errors:")
 				);
 
-				console.log(runner.errors.join("\n"));
+				console.log(runner.errors.map(
+					this._formatError.bind(this)
+				).join("\n"));
 			} else if (runner.warnings.length) {
 				console.log(
 					chalk.bold.keyword("orange")(runner.name + " Warnings:")
@@ -158,9 +160,58 @@ class Output {
 				console.log(runner.messages.join("\n"));
 			} else return;
 
-			if (i !== runners.length - 1)
-				console.log(/* Divider */);
+			console.log(/* Divider */);
 		});
+	}
+
+	// Helpers
+	// =========================================================================
+
+	_formatError (err) {
+		let e = err.message;
+
+		if (err.hasOwnProperty("file"))
+			e += " " + err.file;
+
+		if (err.hasOwnProperty("line") && err.hasOwnProperty("column"))
+			e += ` (${err.line}:${err.column})`;
+
+		if (err.hasOwnProperty("extract")) {
+			const extract = Array.isArray(err.extract) ? err.extract : err.extract.split("\n")
+				, formattedExtract = [];
+
+			e += "\n\n";
+
+			const l = extract.length
+				, eh = Math.ceil((l % 2 === 0 ? l + 1 : l) / 2)
+				, ln = err.line - eh
+				, lnl = ((err.line + eh) + "").length + 1;
+
+			for (let i = 0; i < l; ++i) {
+				const line = extract[i];
+
+				if (typeof line === "undefined")
+					continue;
+
+				let f, num = this._pad(ln + i, lnl);
+
+				if (i + 1 === Math.ceil((l % 2 === 0 ? l + 1 : l) / 2))
+					f = chalk.bgBlackBright(chalk.white(num) + line);
+				else
+					f = chalk.grey(num) + line;
+
+				formattedExtract.push(f);
+			}
+
+			e += formattedExtract.join("\n");
+		}
+
+		return e;
+	}
+
+	_pad (n, width) {
+		n = n + '';
+		return n.length >= width ? n : n + new Array(width - n.length + 1).join(" ");
 	}
 
 }

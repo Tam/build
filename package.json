@@ -12,6 +12,7 @@
     "chalk": "^2.4.1",
     "deepmerge": "^2.1.1",
     "inquirer": "^6.2.0",
+    "less": "^3.8.1",
     "pretty-hrtime": "^1.0.3",
     "text-table": "^0.2.0"
   }
