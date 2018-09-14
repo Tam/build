@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-!async function () {
+!function () {
 	switch (process.argv[2]) {
 		case "init":
 			require("./init");
