@@ -12,9 +12,8 @@ module.exports = {
 		entry: [],
 
 		// An array of output CSS file paths. Must match the entry paths.
-		// Output names can contain:
-		// "[name]": the entry files name
-		// "[hash:5]": a random hash (with a given length)
+		// Output names can contain: "[hash:20]": a random hash (with a given
+		// length)
 		output: [],
 	},
 

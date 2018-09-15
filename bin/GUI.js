@@ -4,7 +4,7 @@ const trackTime = require("./helpers/trackTime")
 	, table = require("text-table")
 	, prettyTime = require("pretty-hrtime");
 
-class Output {
+class GUI {
 
 	// Properties
 	// =========================================================================
@@ -216,4 +216,4 @@ class Output {
 
 }
 
-module.exports = Output;
+module.exports = GUI;
