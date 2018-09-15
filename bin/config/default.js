@@ -61,12 +61,14 @@ module.exports = {
 
 	browserSync: {
 		// If set to false, browser sync will not run
-		run: process.env.NODE_ENV !== "production",
+		// (will not run in production)
+		run: true,
 
 		// The URL browser sync should proxy
 		proxy: "https://dev.site.com",
 
 		// An array of additional paths to watch
+		// Starting a path with `!` will make it ignored
 		watch: [
 			"templates/**/*",
 		],

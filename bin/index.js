@@ -6,6 +6,8 @@
 			require("./init");
 			return;
 		case "once":
+		case "prod":
+		case "p":
 			process.env.NODE_ENV = "production";
 			require("./build");
 			return;
