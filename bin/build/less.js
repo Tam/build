@@ -70,7 +70,7 @@ class Less {
 
 				watcher.on("all", this.render.bind(this, entry));
 
-				this.watchers[entry.path] = watcher;
+				this.watchers[entry.path] = { watcher, imports };
 			} catch (e) {
 				this.gui.error(e);
 			}
@@ -82,8 +82,13 @@ class Less {
 
 		try {
 			// Compile Less
-			let { css, map } = await this._renderLess(entry);
+			let { css, map, imports } = await this._renderLess(entry);
 
+			// Update watcher
+			if (this.watchers !== void 0)
+				this._updateWatcher(entry, imports);
+
+			// Skip if empty
 			if (css === null) {
 				this.gui.message("Less is empty, nothing compiled!");
 				this._complete();
@@ -168,6 +173,16 @@ class Less {
 		}));
 	}
 
+	_updateWatcher (entry, imports) {
+		const { watcher, imports: oldImports } = this.watchers[entry.path];
+
+		const added   = imports.filter(p => !oldImports.includes(p));
+		const removed = oldImports.filter(p => !imports.includes(p));
+
+		if (added.length > 0) watcher.add(added);
+		if (removed.length > 0) watcher.unwatch(removed);
+	}
+
 	_hashFilename (filename, fileContents) {
 		const hash = /\[hash:(\d+)]/g.exec(filename);
 		if (!hash)
@@ -206,9 +221,8 @@ class Less {
 
 			const files = fs.readdirSync(dir).filter(name => regex.test(name));
 
-			for (let i = 0, l = files.length; i < l; ++i) {
+			for (let i = 0, l = files.length; i < l; ++i)
 				fs.unlinkSync(path.join(dir, files[i]));
-			}
 
 			resolve();
 		});

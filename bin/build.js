@@ -3,8 +3,14 @@ const config = require("./config")
 
 const gui = new GUI(config);
 
-const reload = () => {}
-	, manifest = (entry, output) => {};
+// Manifest
+let manifest;
+if (config.manifest === null)
+	manifest = (entry, output) => {};
+else
+	manifest = new (require("./build/manifest"))(config);
+
+const reload = () => {};
 
 if (config.less.run)
 	new (require("./build/less"))(config.less, gui.less, reload, manifest);
