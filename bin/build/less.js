@@ -24,19 +24,22 @@ class Less {
 		});
 
 		this.postCssProcessor = postCss([
-			require("postcss-flexbugs-fixes"),
 			require("postcss-custom-properties")({ preserve: true }),
 			require("autoprefixer")({
 				browsers: [
 					">1%",
-					"last 4 versions",
+					"last 2 versions",
 					"Firefox ESR",
-					"not ie < 9",
+					"not dead",
 				],
 				flexbox: "no-2009",
 				grid: true,
 			}),
-			require("cssnano")({ zindex: false }),
+			require("cssnano")({
+				preset: ["advanced", {
+					zindex: false,
+				}]
+			}),
 		]);
 
 		if (process.env.NODE_ENV !== "production")
@@ -106,7 +109,7 @@ class Less {
 			ensureDirectoryExists(output);
 
 			// Remove previous
-			this._removeOld(entry);
+			await this._removeOld(entry);
 
 			// Write CSS
 			fs.writeFileSync(
@@ -183,32 +186,31 @@ class Less {
 	}
 
 	_removeOld (entry) {
-		const name = path.basename(entry.output)
-			, dir  = path.dirname(entry.output);
+		return new Promise(resolve => {
+			const name = path.basename(entry.output)
+				, dir  = path.dirname(entry.output);
 
-		const hash = /\[hash:(\d+)]/g.exec(name);
-		let regex;
+			const hash = /\[hash:(\d+)]/g.exec(name);
+			let regex;
 
-		const output = name.replace(/\./g, "\\.");
+			const output = name.replace(/\./g, "\\.");
 
-		if (hash) {
-			regex = new RegExp("^" + output.replace(
-				hash[0],
-				"[a-z\\d]{" + hash[1] + "}"
-			) + "(\\.map)?$");
-		} else {
-			regex = new RegExp("^" + output + "(\\.map)?$");
-		}
-
-		fs.readdir(dir, (error, files) => {
-			if (error) {
-				this.gui.error(error);
-				return;
+			if (hash) {
+				regex = new RegExp("^" + output.replace(
+					hash[0],
+					"[a-z\\d]{" + hash[1] + "}"
+				) + "(\\.map)?$");
+			} else {
+				regex = new RegExp("^" + output + "(\\.map)?$");
 			}
 
-			files.filter(name => regex.test(name)).forEach(file => {
-				fs.unlinkSync(path.join(dir, file));
-			});
+			const files = fs.readdirSync(dir).filter(name => regex.test(name));
+
+			for (let i = 0, l = files.length; i < l; ++i) {
+				fs.unlinkSync(path.join(dir, files[i]));
+			}
+
+			resolve();
 		});
 	}
 

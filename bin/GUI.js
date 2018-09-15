@@ -82,6 +82,8 @@ class GUI {
 	message (runner, type, message) {
 		if (Array.isArray(message))
 			this[runner][type].concat(message);
+		else if (message === "clear")
+			this[runner][type] = [];
 		else
 			this[runner][type].push(message);
 
