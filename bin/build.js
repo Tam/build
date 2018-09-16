@@ -26,3 +26,9 @@ else
 
 if (config.less.run)
 	new (require("./build/less"))(config.less, gui.less, reload, manifest);
+
+// JS
+// =========================================================================
+
+if (config.js.run)
+	new (require("./build/js"))(config.js, gui.js, reload, manifest);

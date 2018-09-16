@@ -38,7 +38,7 @@ module.exports = {
 		// for supported output configs
 		output: {
 			path: process.cwd() + "/web/assets/js",
-			filename: "[name].[hash:5].js",
+			filename: "[name].[hash:20].js",
 		},
 	},
 

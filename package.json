@@ -9,18 +9,25 @@
     "build": "bin/index.js"
   },
   "dependencies": {
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
     "autoprefixer": "^9.1.5",
+    "babel-eslint": "^9.0.0",
+    "babel-loader": "^8.0.2",
     "browser-sync": "^2.24.7",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",
     "cssnano": "^4.1.0",
     "cssnano-preset-advanced": "^4.0.0",
     "deepmerge": "^2.1.1",
+    "eslint": "^5.6.0",
+    "eslint-loader": "^2.1.0",
     "inquirer": "^6.2.0",
     "less": "^3.8.1",
     "postcss": "^7.0.2",
     "postcss-custom-properties": "^7.0.0",
     "pretty-hrtime": "^1.0.3",
-    "text-table": "^0.2.0"
+    "text-table": "^0.2.0",
+    "webpack": "^4.19.0"
   }
 }

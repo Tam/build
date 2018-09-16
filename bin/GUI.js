@@ -168,6 +168,9 @@ class GUI {
 	// =========================================================================
 
 	_formatError (err) {
+		if (typeof err === "string")
+			return err;
+
 		let e = err.message;
 
 		if (err.hasOwnProperty("file"))
