@@ -88,19 +88,35 @@ class JS {
 		}).watch({
 			ignored: /node_modules/,
 		}, (err, stats) => {
+			gui.run();
+
 			if (err) {
 				gui.error(err);
+				gui.complete();
 				return;
 			}
 
+			const info = stats.toJson();
+			// gui.message(JSON.stringify(info, null, 2));
+
 			if (stats.hasErrors()) {
-				gui.error(stats.toString());
-			} else if (stats.hasWarnings()) {
-				gui.warning(stats.toString());
-			} else {
-				gui.message(stats.toString());
-				reload();
+				info.errors.forEach(gui.error);
+				gui.complete();
+				return;
 			}
+
+			Object.keys(info.entrypoints).forEach(key => {
+				manifest(
+					key + ".js",
+					info.entrypoints[key].assets[0]
+				);
+			});
+
+			if (stats.hasWarnings())
+				info.warnings.forEach(gui.warning);
+
+			gui.complete(info.time);
+			reload();
 		});
 	}
 

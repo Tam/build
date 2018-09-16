@@ -88,9 +88,10 @@ class GUI {
 		this.render();
 	}
 
-	complete (runner) {
+	complete (runner, time = null) {
 		this[runner].running = false;
 		this[runner].runTime = this[runner].timer.stop();
+		if (time) this[runner].runTime = time;
 
 		this.render();
 	}
