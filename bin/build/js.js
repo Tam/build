@@ -1,5 +1,6 @@
 const webpack = require("webpack")
 	, fs = require("fs")
+	, path = require("path")
 	, eslintFormatter = require("../helpers/eslintFormatter")
 	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
 
@@ -106,18 +107,22 @@ class JS {
 				return;
 			}
 
-			const info = stats.toJson();
-			// gui.message(JSON.stringify(info, null, 2));
+			const meta = stats.toJson();
+			// gui.error(JSON.stringify(meta, null, 2));
 
 			await this._removePrevious();
-			this.previousFiles = info.assets.map(asset => asset.name);
+			this.previousFiles = meta.assets.map(
+				asset => path.join(meta.outputPath, asset.name)
+			);
 
-			Object.keys(info.entrypoints).forEach(key => {
+			Object.keys(meta.entrypoints).forEach(key => {
 				manifest(
 					key + ".js",
-					info.entrypoints[key].assets[0]
+					meta.entrypoints[key].assets[0]
 				);
 			});
+
+			const info = stats.toJson("errors-only");
 
 			if (stats.hasErrors()) {
 				info.errors.forEach(gui.error);
