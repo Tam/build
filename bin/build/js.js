@@ -63,6 +63,7 @@ class JS {
 							options: {
 								presets: [require.resolve('@babel/preset-env')],
 								plugins: [
+									require.resolve("@babel/plugin-external-helpers"),
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
