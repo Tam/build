@@ -8,7 +8,12 @@ try {
 	config = require("./default");
 }
 
-module.exports = deepmerge(
+config = deepmerge(
 	require("./config"),
 	config
 );
+
+if (process.env.NODE_ENV !== "production")
+	config.critical.run = false;
+
+module.exports = config;

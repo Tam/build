@@ -8,8 +8,6 @@ class JS {
 	constructor (config, gui, reload, manifest) {
 		const isProd = process.env.NODE_ENV === "production";
 		this.gui = gui;
-
-		// TODO: Get previous files somehow (incl. chunks)...
 		this.previousFiles = [];
 
 		webpack({

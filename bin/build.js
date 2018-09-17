@@ -32,3 +32,9 @@ if (config.less.run)
 
 if (config.js.run)
 	new (require("./build/js"))(config.js, gui.js, reload, manifest);
+
+// Critical
+// =========================================================================
+
+if (config.critical.run)
+	new (require("./build/critical"))(config.critical, gui.critical);

@@ -44,7 +44,8 @@ module.exports = {
 
 	critical: {
 		// If set to false, critical css will not be generated
-		run: process.env.NODE_ENV === "production",
+		// (will not run in development)
+		run: true,
 
 		// The base URL of the site to generate critical css from
 		baseUrl: "https://dev.site.com",
