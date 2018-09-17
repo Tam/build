@@ -27,6 +27,7 @@
     "eslint-loader": "^2.1.0",
     "inquirer": "^6.2.0",
     "less": "^3.8.1",
+    "penthouse": "1.8.2-rc",
     "postcss": "^7.0.2",
     "postcss-custom-properties": "^7.0.0",
     "pretty-hrtime": "^1.0.3",

@@ -3,7 +3,6 @@ module.exports = {
 	// generate.
 	manifest: "manifest.json",
 
-	// Less
 	less: {
 		// If set to false, Less compilation will not run
 		run: true,
@@ -21,7 +20,6 @@ module.exports = {
 		],
 	},
 
-	// JS
 	js: {
 		// If set to false, JS compilation will not run
 		run: true,
@@ -49,6 +47,10 @@ module.exports = {
 
 		// The base URL of the site to generate critical css from
 		baseUrl: "https://dev.site.com",
+
+		// The URL of your css (can be array of URLs)
+		// Use `[file.name]` to get a value from the manifest
+		cssUrl: "https://dev.site.com/assets/css/[style.less]",
 
 		// The output directory path for generated critical CSS files
 		output: "templates/_critical",

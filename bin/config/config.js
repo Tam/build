@@ -18,6 +18,7 @@ module.exports = {
 	critical: {
 		run: false,
 		baseUrl: "",
+		cssUrl: "",
 		output: "",
 		paths: {},
 	},

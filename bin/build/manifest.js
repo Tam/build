@@ -1,15 +1,20 @@
 const fs = require("fs");
 
 class Manifest {
-
 	constructor (config) {
 		this.manifestPath = config.manifest;
 		this.loadManifest();
+
+		Manifest.i = this;
 
 		return (entry, output) => {
 			this.manifest[entry] = output;
 			this.writeManifest();
 		};
+	}
+
+	static read (key) {
+		return Manifest.i ? Manifest.i.manifest[key] : null;
 	}
 
 	loadManifest () {
