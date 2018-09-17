@@ -88,10 +88,9 @@ class GUI {
 		this.render();
 	}
 
-	complete (runner, time = null) {
+	complete (runner) {
 		this[runner].running = false;
 		this[runner].runTime = this[runner].timer.stop();
-		if (time) this[runner].runTime = time;
 
 		this.render();
 	}
@@ -116,10 +115,10 @@ class GUI {
 			if (runner.running) icon = chalk.bold.yellow("►");
 			else if (runner.errors.length) icon = chalk.bold.red("✘");
 			else if (runner.warnings.length) icon = chalk.bold.yellow("!");
-			else if (runner.runTime) {
-				icon = chalk.bold.green("✓");
+			else if (runner.runTime) icon = chalk.bold.green("✓");
+
+			if (runner.runTime)
 				time = chalk.cyanBright(prettyTime(runner.runTime));
-			}
 
 			return [
 				icon,
@@ -152,7 +151,7 @@ class GUI {
 					chalk.bold.keyword("orange")(runner.name + " Warnings:")
 				);
 
-				console.log(runner.warnings.join("\n"));
+				console.log(runner.warnings.map(warning => warning.replace("\t", "    ")).join("\n"));
 			} else if (runner.messages.length) {
 				console.log(
 					chalk.bold.blue(runner.name + " Messages:")
@@ -170,7 +169,7 @@ class GUI {
 
 	_formatError (err) {
 		if (typeof err === "string")
-			return err;
+			return err.replace("        ", "    ");
 
 		let e = err.message;
 

@@ -15,9 +15,13 @@ class Manifest {
 	loadManifest () {
 		try {
 			if (fs.existsSync(this.manifestPath)) {
-				this.manifest = JSON.parse(
-					fs.readFileSync(this.manifestPath, "utf8")
-				);
+				const stringManifest = fs.readFileSync(this.manifestPath, "utf8");
+
+				if (stringManifest === "") {
+					this.manifest = {};
+				} else {
+					this.manifest = JSON.parse(stringManifest);
+				}
 			} else {
 				this.manifest = {};
 				this.writeManifest();

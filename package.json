@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.0.1",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "autoprefixer": "^9.1.5",
     "babel-eslint": "^9.0.0",

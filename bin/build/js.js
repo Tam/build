@@ -1,11 +1,19 @@
 const webpack = require("webpack")
-	, eslintFormatter = require("../helpers/eslintFormatter");
+	, fs = require("fs")
+	, eslintFormatter = require("../helpers/eslintFormatter")
+	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
 
 class JS {
 
 	constructor (config, gui, reload, manifest) {
+		const isProd = process.env.NODE_ENV === "production";
+		this.gui = gui;
+
+		// TODO: Get previous files somehow (incl. chunks)...
+		this.previousFiles = [];
+
 		webpack({
-			devtool: 'cheap-module-source-map',
+			devtool: isProd ? "source-map" : "cheap-module-source-map",
 
 			mode: process.env.NODE_ENV || "development",
 
@@ -56,6 +64,9 @@ class JS {
 							loader: require.resolve('babel-loader'),
 							options: {
 								presets: [require.resolve('@babel/preset-env')],
+								plugins: [
+									require.resolve("@babel/plugin-syntax-dynamic-import"),
+								],
 								cacheDirectory: true,
 							},
 						},
@@ -66,6 +77,7 @@ class JS {
 			},
 
 			plugins: [
+				new BuildWebpackPlugin(gui),
 				new webpack.NamedModulesPlugin(),
 				new webpack.DefinePlugin({
 					'process.env': {
@@ -87,9 +99,7 @@ class JS {
 			},
 		}).watch({
 			ignored: /node_modules/,
-		}, (err, stats) => {
-			gui.run();
-
+		}, async (err, stats) => {
 			if (err) {
 				gui.error(err);
 				gui.complete();
@@ -99,24 +109,47 @@ class JS {
 			const info = stats.toJson();
 			// gui.message(JSON.stringify(info, null, 2));
 
-			if (stats.hasErrors()) {
-				info.errors.forEach(gui.error);
-				gui.complete();
-				return;
-			}
+			await this._removePrevious();
+			this.previousFiles = [];
 
 			Object.keys(info.entrypoints).forEach(key => {
+				this.previousFiles.push(info.entrypoints[key].assets[0]);
+
 				manifest(
 					key + ".js",
 					info.entrypoints[key].assets[0]
 				);
 			});
 
+			if (stats.hasErrors()) {
+				info.errors.forEach(gui.error);
+				gui.complete();
+				return;
+			}
+
 			if (stats.hasWarnings())
 				info.warnings.forEach(gui.warning);
 
-			gui.complete(info.time);
+			gui.complete();
 			reload();
+		});
+	}
+
+	// Helpers
+	// =========================================================================
+
+	async _removePrevious () {
+		return new Promise(resolve => {
+			try {
+				for (let i = 0, l = this.previousFiles.length; i < l; ++i) {
+					fs.unlinkSync(this.previousFiles[i]);
+					fs.unlinkSync(this.previousFiles[i] + ".map");
+				}
+			} catch (e) {
+				this.gui.error(e);
+			}
+
+			resolve();
 		});
 	}
 
