@@ -66,6 +66,7 @@ class JS {
 								presets: [require.resolve('@babel/preset-env')],
 								plugins: [
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
+									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
 								cacheDirectory: true,
 							},
