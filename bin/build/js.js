@@ -111,11 +111,9 @@ class JS {
 			// gui.message(JSON.stringify(info, null, 2));
 
 			await this._removePrevious();
-			this.previousFiles = [];
+			this.previousFiles = info.assets.map(asset => asset.name);
 
 			Object.keys(info.entrypoints).forEach(key => {
-				this.previousFiles.push(info.entrypoints[key].assets[0]);
-
 				manifest(
 					key + ".js",
 					info.entrypoints[key].assets[0]
@@ -142,10 +140,8 @@ class JS {
 	async _removePrevious () {
 		return new Promise(resolve => {
 			try {
-				for (let i = 0, l = this.previousFiles.length; i < l; ++i) {
+				for (let i = 0, l = this.previousFiles.length; i < l; ++i)
 					fs.unlinkSync(this.previousFiles[i]);
-					fs.unlinkSync(this.previousFiles[i] + ".map");
-				}
 			} catch (e) {
 				this.gui.error(e);
 			}
