@@ -110,10 +110,11 @@ class JS {
 			const meta = stats.toJson();
 			// gui.error(JSON.stringify(meta, null, 2));
 
-			await this._removePrevious();
-			this.previousFiles = meta.assets.map(
+			const nextFiles = meta.assets.map(
 				asset => path.join(meta.outputPath, asset.name)
-			);
+			).filter(p => !this.previousFiles.includes(p));
+			await this._removePrevious();
+			this.previousFiles = nextFiles;
 
 			Object.keys(meta.entrypoints).forEach(key => {
 				manifest(
