@@ -129,15 +129,13 @@ class JS {
 			const info = stats.toJson("errors-only");
 
 			if (stats.hasErrors()) {
-				info.errors.forEach(gui.error);
+				info.errors.map(this._tidyWebpackMessages).forEach(gui.error);
 				gui.complete();
 				return;
 			}
 
 			if (stats.hasWarnings())
-				info.warnings.map(
-					w => w.split("\n").filter(l => l.indexOf("Module Warning") === -1)
-				).forEach(gui.warning);
+				info.warnings.map(this._tidyWebpackMessages).forEach(gui.warning);
 
 			gui.complete();
 			reload();
@@ -158,6 +156,18 @@ class JS {
 
 			resolve();
 		});
+	}
+
+	_tidyWebpackMessages (m) {
+		return m.split("\n").filter(l => (
+			l.indexOf("Module Warning") === -1
+			&& l.indexOf("Module Error") === -1
+			&& l.indexOf("Module build failed") === -1
+			&& l.indexOf("at _class") === -1
+		)).map(l => (
+			l.replace(/\t|\s{8}/g, "    ")
+				.replace(process.cwd() + "/", "")
+		));
 	}
 
 }
