@@ -112,7 +112,8 @@ class JS {
 
 			const nextFiles = meta.assets.map(
 				asset => path.join(meta.outputPath, asset.name)
-			).filter(p => !this.previousFiles.includes(p));
+			);
+			this.previousFiles = this.previousFiles.filter(p => !nextFiles.includes(p));
 			await this._removePrevious();
 			this.previousFiles = nextFiles;
 
@@ -132,7 +133,9 @@ class JS {
 			}
 
 			if (stats.hasWarnings())
-				info.warnings.forEach(gui.warning);
+				info.warnings.map(
+					w => w.split("\n").filter(l => l.indexOf("Module Warning") === -1)
+				).forEach(gui.warning);
 
 			gui.complete();
 			reload();

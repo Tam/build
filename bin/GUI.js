@@ -81,7 +81,10 @@ class GUI {
 
 	message (runner, type, message) {
 		if (Array.isArray(message))
-			this[runner][type].concat(message);
+			this[runner][type] = [
+				...this[runner][type],
+				...message,
+			];
 		else
 			this[runner][type].push(message);
 
