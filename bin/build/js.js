@@ -60,9 +60,12 @@ class JS {
 					{
 						test: /\.(js)$/,
 						use: {
-							loader: require.resolve('babel-loader'),
+							loader: require.resolve("babel-loader"),
 							options: {
-								presets: [require.resolve('@babel/preset-env')],
+								presets: [
+									require.resolve("@babel/preset-env"),
+									require.resolve("@babel/preset-flow"),
+								],
 								plugins: [
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
