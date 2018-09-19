@@ -28,7 +28,7 @@ module.exports = {
 		// See https://webpack.js.org/configuration/entry-context/#entry for
 		// supported entries
 		entry: {
-			app: "assets/js/app.js",
+			app: "./assets/js/app.js",
 		},
 
 		// An array of output JS file paths. Must match input paths.

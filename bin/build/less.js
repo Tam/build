@@ -164,7 +164,7 @@ class Less {
 			less.render(css, {
 				filename: entry.name,
 				paths: [entry.dir],
-				relativeUrls: true,
+				relativeUrls: false,
 				sourceMap: {},
 			}, (err, out) => {
 				if (err) reject(err);

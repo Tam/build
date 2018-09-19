@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
