@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "autoprefixer": "^9.1.5",
     "babel-eslint": "^9.0.0",
     "babel-loader": "^8.0.2",
-    "browser-sync": "^2.24.7",
+    "browser-sync": "2.23.7",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",
     "cssnano": "^4.1.0",
