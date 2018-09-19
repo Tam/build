@@ -4,6 +4,8 @@ const penthouse = require("penthouse")
 	, http = require("http")
 	, https = require("https")
 	, path = require("path")
+	, fs = require("fs")
+	, { URL } = require("url")
 	, chalk = require("chalk");
 
 class Critical {
@@ -15,10 +17,13 @@ class Critical {
 		gui.run();
 
 		try {
+			// Fix invalid SSL cert errors
+			process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 			this.run();
 		} catch (e) {
 			gui.error(e);
 			gui.complete();
+			process.exit();
 		}
 	}
 
@@ -36,13 +41,17 @@ class Critical {
 		}));
 
 		// Run penthouse in parallel
-		await Promise.all([
-			this.startNewJob(),
-			this.startNewJob(),
-			this.startNewJob(),
-			this.startNewJob(),
-			this.startNewJob()
-		]);
+		try {
+			await Promise.all([
+				this.startNewJob(),
+				this.startNewJob(),
+				this.startNewJob(),
+				this.startNewJob(),
+				this.startNewJob()
+			]);
+		} catch (e) {
+			this.gui.error(e);
+		}
 
 		this.gui.complete();
 	}
@@ -131,7 +140,7 @@ class Critical {
 		// Generate the critical CSS
 		const css = await penthouse({
 			url,
-			css: this.css,
+			cssString: this.css,
 			timeout: 60e3,
 			width: 1300,
 			height: 1500,
@@ -143,7 +152,7 @@ class Critical {
 			css
 		);
 
-		console.log(chalk.grey("Finished"), template);
+		this.gui.message(chalk.grey("Finished ") + template);
 
 		// Continue until we run out of URLs
 		return this.startNewJob();

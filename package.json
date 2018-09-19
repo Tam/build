@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -27,9 +27,9 @@
     "eslint-loader": "^2.1.0",
     "inquirer": "^6.2.0",
     "less": "^3.8.1",
-    "penthouse": "1.8.2-rc",
+    "penthouse": "^1.8.2",
     "postcss": "^7.0.2",
-    "postcss-custom-properties": "^7.0.0",
+    "postcss-custom-properties": "^8.0.3",
     "pretty-hrtime": "^1.0.3",
     "text-table": "^0.2.0",
     "webpack": "^4.19.0"

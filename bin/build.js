@@ -3,38 +3,47 @@ const config = require("./config")
 
 const gui = new GUI(config);
 
-// Manifest
-// =========================================================================
+async function run () {
 
-let manifest;
-if (config.manifest === null)
-	manifest = (entry, output) => {};
-else
-	manifest = new (require("./build/manifest"))(config);
+	// Manifest
+	// =========================================================================
 
-// BrowserSync
-// =========================================================================
+	let manifest;
+	if (config.manifest === null)
+		manifest = (entry, output) => {};
+	else
+		manifest = new (require("./build/manifest"))(config);
 
-let reload;
-if (config.browserSync.run && process.env.NODE_ENV !== "production")
-	reload = new (require("./build/browserSync"))(config.browserSync, gui);
-else
-	reload = () => {};
+	// BrowserSync
+	// =========================================================================
 
-// Less
-// =========================================================================
+	let reload;
+	if (config.browserSync.run && process.env.NODE_ENV !== "production")
+		reload = new (require("./build/browserSync"))(config.browserSync, gui);
+	else
+		reload = () => {};
 
-if (config.less.run)
-	new (require("./build/less"))(config.less, gui.less, reload, manifest);
+	// Less
+	// =========================================================================
 
-// JS
-// =========================================================================
+	if (config.less.run)
+		await new (require("./build/less"))(config.less, gui.less, reload, manifest);
 
-if (config.js.run)
-	new (require("./build/js"))(config.js, gui.js, reload, manifest);
+	// JS
+	// =========================================================================
 
-// Critical
-// =========================================================================
+	if (config.js.run)
+		await new (require("./build/js"))(config.js, gui.js, reload, manifest);
 
-if (config.critical.run)
-	new (require("./build/critical"))(config.critical, gui.critical);
+	// Critical
+	// =========================================================================
+
+	if (config.critical.run)
+		new (require("./build/critical"))(config.critical, gui.critical);
+}
+
+try {
+	run();
+} catch (e) {
+	console.error(e);
+}
