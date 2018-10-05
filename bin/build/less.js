@@ -42,10 +42,14 @@ class Less {
 			}),
 		]);
 
-		if (process.env.NODE_ENV !== "production")
-			this.startWatchers();
-		else
-			this.entries.forEach(this.render.bind(this));
+		return new Promise(async resolve => {
+			if (process.env.NODE_ENV !== "production")
+				await this.startWatchers();
+			else
+				await this.entries.forEach(this.render.bind(this));
+
+			resolve();
+		});
 	}
 
 	// Actions
@@ -164,7 +168,7 @@ class Less {
 			less.render(css, {
 				filename: entry.name,
 				paths: [entry.dir],
-				relativeUrls: true,
+				relativeUrls: false,
 				sourceMap: {},
 			}, (err, out) => {
 				if (err) reject(err);
