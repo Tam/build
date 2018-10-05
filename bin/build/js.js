@@ -1,7 +1,8 @@
 const webpack = require("webpack")
 	, fs = require("fs")
 	, path = require("path")
-	, eslintFormatter = require("../helpers/eslintFormatter")
+	, jsLintingRule = require("../rules/js-linting")
+	, jsRule = require("../rules/js")
 	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
 
 class JS {
@@ -22,58 +23,10 @@ class JS {
 			module: {
 				rules: [
 					// Linting
-					{
-						test: /\.(js)$/,
-						enforce: 'pre',
-						use: {
-							loader: require.resolve('eslint-loader'),
-							options: {
-								formatter: eslintFormatter,
-								eslintPath: require.resolve("eslint"),
-								baseConfig: {
-									parserOptions: {
-										ecmaVersion: 7,
-										sourceType: "module"
-									},
-									extends: "eslint:recommended",
-									parser: "babel-eslint",
-									rules: {
-										eqeqeq: [1, "smart"],
-										semi: [1, "always"],
-										"no-loop-func": [2],
-										"no-unused-vars": [1],
-										"no-console": [1],
-										"no-mixed-spaces-and-tabs": [0],
-									},
-									env: {
-										browser: true,
-										es6: true,
-									},
-								},
-							},
-						},
-						include: config.entry.path,
-						exclude: /(node_modules)/,
-					},
+					jsLintingRule(config),
 
 					// Babel
-					{
-						test: /\.(js)$/,
-						use: {
-							loader: require.resolve('babel-loader'),
-							options: {
-								presets: [require.resolve('@babel/preset-env')],
-								plugins: [
-									require.resolve("@babel/plugin-external-helpers"),
-									require.resolve("@babel/plugin-syntax-dynamic-import"),
-									require.resolve("@babel/plugin-proposal-class-properties"),
-								],
-								cacheDirectory: true,
-							},
-						},
-						include: config.entry.path,
-						exclude: /(node_modules)/,
-					}
+					jsRule(config),
 				],
 			},
 

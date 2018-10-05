@@ -28,4 +28,10 @@ module.exports = {
 		proxy: "",
 		watch: [],
 	},
+
+	vue: {
+		run: false,
+		entry: {},
+		output: {},
+	},
 };
