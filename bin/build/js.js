@@ -84,13 +84,13 @@ class JS {
 								presets: [
 									require.resolve("@babel/preset-env"),
 									require.resolve("@babel/preset-flow"),
+									{ useBuiltIns: 'usage' },
 								],
 								plugins: [
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
 								cacheDirectory: true,
-								useBuiltIns: 'usage',
 							},
 						},
 						include: this.config.entry.path,
