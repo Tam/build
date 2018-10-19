@@ -82,9 +82,11 @@ class JS {
 							loader: require.resolve("babel-loader"),
 							options: {
 								presets: [
-									require.resolve("@babel/preset-env"),
+									[
+										require.resolve("@babel/preset-env"),
+										{ useBuiltIns: 'usage' },
+									],
 									require.resolve("@babel/preset-flow"),
-									{ useBuiltIns: 'usage' },
 								],
 								plugins: [
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
