@@ -90,6 +90,7 @@ class JS {
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
 								cacheDirectory: true,
+								useBuiltIns: 'usage',
 							},
 						},
 						include: this.config.entry.path,
