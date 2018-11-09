@@ -97,6 +97,15 @@ class JS {
 									require.resolve("@babel/preset-flow"),
 								],
 								plugins: [
+									[
+										require.resolve('@babel/plugin-transform-runtime'),
+										{
+											corejs: false,
+											helpers: true,
+											regenerator: true,
+											useESModules: true,
+										},
+									],
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
@@ -130,6 +139,13 @@ class JS {
 			performance: {
 				hints: false,
 			},
+
+			resolve: {
+				modules: [
+					'node_modules',
+					path.resolve(__dirname, 'node_modules'),
+				],
+			}
 		});
 	}
 
