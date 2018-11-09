@@ -37,6 +37,7 @@ module.exports = {
 		output: {
 			path: process.cwd() + "/web/assets/js",
 			filename: "[name].[hash:20].js",
+			chunkFilename: "chunks/[name].[chunkhash].js",
 		},
 	},
 
@@ -75,25 +76,5 @@ module.exports = {
 		watch: [
 			"templates/**/*",
 		],
-	},
-
-	vue: {
-		// If set to false, Vue compilation will not run
-		run: true,
-
-		// An array of entry Vue file paths
-		// See https://webpack.js.org/configuration/entry-context/#entry for
-		// supported entries
-		entry: {
-			app: "assets/js/app.js",
-		},
-
-		// An array of output Vue file paths. Must match input paths.
-		// See https://webpack.js.org/configuration/output/
-		// for supported output configs
-		output: {
-			path: process.cwd() + "/web/assets/js",
-			filename: "[name].[hash:20].js",
-		},
 	},
 };

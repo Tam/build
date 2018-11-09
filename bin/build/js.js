@@ -1,8 +1,8 @@
 const webpack = require("webpack")
 	, fs = require("fs")
 	, path = require("path")
-	, jsLintingRule = require("../rules/js-linting")
-	, jsRule = require("../rules/js")
+	, glob = require("glob")
+	, eslintFormatter = require("../helpers/eslintFormatter")
 	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
 
 class JS {
@@ -16,6 +16,9 @@ class JS {
 		this.previousFiles = [];
 
 		return new Promise(async resolve => {
+			await this._removeOld(this.config.output.filename);
+			await this._removeOld(this.config.output.chunkFilename);
+
 			if (this.isProd) {
 				await this.webpack().run(async (err, stats) => {
 					await this.callback(err, stats);
@@ -42,10 +45,67 @@ class JS {
 			module: {
 				rules: [
 					// Linting
-					jsLintingRule(this.config),
+					{
+						test: /\.(js)$/,
+						enforce: 'pre',
+						use: {
+							loader: require.resolve('eslint-loader'),
+							options: {
+								formatter: eslintFormatter,
+								eslintPath: require.resolve("eslint"),
+								baseConfig: {
+									parserOptions: {
+										ecmaVersion: 7,
+										sourceType: "module"
+									},
+									extends: "eslint:recommended",
+									parser: "babel-eslint",
+									rules: {
+										eqeqeq: [1, "smart"],
+										semi: [1, "always"],
+										"no-loop-func": [2],
+										"no-unused-vars": [1],
+										"no-console": [1],
+										"no-mixed-spaces-and-tabs": [0],
+									},
+									env: {
+										browser: true,
+										es6: true,
+									},
+								},
+							},
+						},
+						include: this.config.entry.path,
+						exclude: /(node_modules)/,
+					},
 
 					// Babel
-					jsRule(this.config),
+					{
+						test: /\.(js)$/,
+						use: {
+							loader: require.resolve("babel-loader"),
+							options: {
+								presets: [
+									[
+										require.resolve("@babel/preset-env"),
+										{
+											// useBuiltIns: 'usage',
+											useBuiltIns: false,
+											targets: '> 1%, last 2 versions, Firefox ESR, not dead, not ie <= 10',
+										},
+									],
+									require.resolve("@babel/preset-flow"),
+								],
+								plugins: [
+									require.resolve("@babel/plugin-syntax-dynamic-import"),
+									require.resolve("@babel/plugin-proposal-class-properties"),
+								],
+								cacheDirectory: true,
+							},
+						},
+						include: this.config.entry.path,
+						exclude: /(node_modules)\/(?!(ether-[\w\d-_]+)\/).*/,
+					}
 				],
 			},
 
@@ -119,12 +179,27 @@ class JS {
 		return new Promise(resolve => {
 			try {
 				for (let i = 0, l = this.previousFiles.length; i < l; ++i)
-					fs.unlinkSync(this.previousFiles[i]);
+					if (fs.existsSync(this.previousFiles[i]))
+						fs.unlinkSync(this.previousFiles[i]);
 			} catch (e) {
 				this.gui.error(e);
 			}
 
 			resolve();
+		});
+	}
+
+	async _removeOld (filename) {
+		if (!filename)
+			return Promise.resolve();
+
+		filename = filename.replace(/\[[^\[]+]/g, '*') + '?(.map)';
+
+		glob(filename, {
+			cwd: this.config.output.path,
+			absolute: true,
+		}, (er, files) => {
+			files.forEach(fs.unlinkSync);
 		});
 	}
 
