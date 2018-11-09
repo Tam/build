@@ -107,7 +107,7 @@ class JS {
 							},
 						},
 						include: this.config.entry.path,
-						exclude: /(node_modules)/,
+						exclude: /(node_modules)\/(?!(ether-[\w\d-_]+)\/).*/,
 					}
 				],
 			},
