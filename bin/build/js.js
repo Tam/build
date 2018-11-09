@@ -96,10 +96,7 @@ class JS {
 									require.resolve("@babel/preset-flow"),
 								],
 								plugins: [
-									[
-										require.resolve('@babel/plugin-transform-runtime'),
-										{ corejs: 2 }
-									],
+									require.resolve('@babel/plugin-transform-runtime'),
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
@@ -132,13 +129,6 @@ class JS {
 
 			performance: {
 				hints: false,
-			},
-
-			resolve: {
-				modules: [
-					'node_modules',
-					path.join(__dirname, '../../node_modules'),
-				]
 			},
 		});
 	}
