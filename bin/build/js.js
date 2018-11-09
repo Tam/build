@@ -1,6 +1,7 @@
 const webpack = require("webpack")
 	, fs = require("fs")
 	, path = require("path")
+	, glob = require("glob")
 	, eslintFormatter = require("../helpers/eslintFormatter")
 	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
 
@@ -15,6 +16,9 @@ class JS {
 		this.previousFiles = [];
 
 		return new Promise(async resolve => {
+			await this._removeOld(this.config.output.filename);
+			await this._removeOld(this.config.output.chunkFilename);
+
 			if (this.isProd) {
 				await this.webpack().run(async (err, stats) => {
 					await this.callback(err, stats);
@@ -182,12 +186,27 @@ class JS {
 		return new Promise(resolve => {
 			try {
 				for (let i = 0, l = this.previousFiles.length; i < l; ++i)
-					fs.unlinkSync(this.previousFiles[i]);
+					if (fs.existsSync(this.previousFiles[i]))
+						fs.unlinkSync(this.previousFiles[i]);
 			} catch (e) {
 				this.gui.error(e);
 			}
 
 			resolve();
+		});
+	}
+
+	async _removeOld (filename) {
+		if (!filename)
+			return Promise.resolve();
+
+		filename = filename.replace(/\[[^\[]+]/g, '*');
+
+		glob(filename, {
+			cwd: this.config.output.path,
+			absolute: true,
+		}, (er, files) => {
+			files.forEach(fs.unlinkSync);
 		});
 	}
 

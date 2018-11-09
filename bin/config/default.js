@@ -37,6 +37,7 @@ module.exports = {
 		output: {
 			path: process.cwd() + "/web/assets/js",
 			filename: "[name].[hash:20].js",
+			chunkFilename: "chunks/[name].[chunkhash].js",
 		},
 	},
 
