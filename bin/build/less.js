@@ -31,6 +31,7 @@ class Less {
 					"last 2 versions",
 					"Firefox ESR",
 					"not dead",
+					'not ie <= 10',
 				],
 				flexbox: "no-2009",
 				grid: true,

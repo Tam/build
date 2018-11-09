@@ -88,7 +88,10 @@ class JS {
 								presets: [
 									[
 										require.resolve("@babel/preset-env"),
-										{ useBuiltIns: 'usage' },
+										{
+											useBuiltIns: 'usage',
+											targets: '> 1%, last 2 versions, Firefox ESR, not dead, not ie <= 10',
+										},
 									],
 									require.resolve("@babel/preset-flow"),
 								],
