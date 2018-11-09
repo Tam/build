@@ -89,14 +89,14 @@ class JS {
 									[
 										require.resolve("@babel/preset-env"),
 										{
-											useBuiltIns: 'usage',
+											// useBuiltIns: 'usage',
+											useBuiltIns: false,
 											targets: '> 1%, last 2 versions, Firefox ESR, not dead, not ie <= 10',
 										},
 									],
 									require.resolve("@babel/preset-flow"),
 								],
 								plugins: [
-									require.resolve('@babel/plugin-transform-runtime'),
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
 								],
@@ -193,7 +193,7 @@ class JS {
 		if (!filename)
 			return Promise.resolve();
 
-		filename = filename.replace(/\[[^\[]+]/g, '*');
+		filename = filename.replace(/\[[^\[]+]/g, '*') + '?(.map)';
 
 		glob(filename, {
 			cwd: this.config.output.path,
