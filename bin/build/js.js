@@ -103,7 +103,7 @@ class JS {
 											corejs: false,
 											helpers: true,
 											regenerator: true,
-											useESModules: true,
+											useESModules: false,
 										},
 									],
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
@@ -142,8 +142,11 @@ class JS {
 
 			resolve: {
 				modules: [
+					path.relative(
+						process.cwd(),
+						path.resolve(__dirname, '../../node_modules')
+					),
 					'node_modules',
-					path.resolve(__dirname, 'node_modules'),
 				],
 			}
 		});
