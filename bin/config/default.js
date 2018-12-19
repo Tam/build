@@ -1,7 +1,7 @@
 module.exports = {
 	// The filename of the manifest file. If set to null, not manifest will
 	// generate.
-	manifest: "manifest.json",
+	manifest: 'manifest.json',
 
 	less: {
 		// If set to false, Less compilation will not run
@@ -9,14 +9,14 @@ module.exports = {
 
 		// An array of entry Less file paths. Must be strings.
 		entry: [
-			"assets/less/style.less",
+			'assets/less/style.less',
 		],
 
 		// An array of output CSS file paths. Must match the entry paths.
 		// Output names can contain: "[hash:20]": a random hash (with a given
 		// length)
 		output: [
-			"web/assets/css/style.[hash:20].css",
+			'web/assets/css/style.[hash:20].css',
 		],
 	},
 
@@ -28,17 +28,17 @@ module.exports = {
 		// See https://webpack.js.org/configuration/entry-context/#entry for
 		// supported entries
 		entry: {
-			app: "./assets/js/app.js",
+			app: './assets/js/app.js',
 		},
 
 		// An array of output JS file paths. Must match input paths.
 		// See https://webpack.js.org/configuration/output/
 		// for supported output configs
 		output: {
-			path: process.cwd() + "/web/assets/js",
-			publicPath: "/assets/js/",
-			filename: "[name].[hash:20].js",
-			chunkFilename: "chunks/[name].[chunkhash].js",
+			path: process.cwd() + '/web/assets/js',
+			publicPath: '/assets/js/',
+			filename: '[name].[hash:20].js',
+			chunkFilename: 'chunks/[name].[chunkhash].js',
 		},
 	},
 
@@ -48,19 +48,19 @@ module.exports = {
 		run: true,
 
 		// The base URL of the site to generate critical css from
-		baseUrl: "https://dev.site.com",
+		baseUrl: 'https://dev.site.com',
 
 		// The URL of your css (can be array of URLs)
 		// Use `[file.name]` to get a value from the manifest
-		cssUrl: "https://dev.site.com/assets/css/[style.less]",
+		cssUrl: 'https://dev.site.com/assets/css/[style.less]',
 
 		// The output directory path for generated critical CSS files
-		output: "templates/_critical",
+		output: 'templates/_critical',
 
 		// The critical css files and their associated URIs.
 		// "_blog-post": "/blog/my-average-post"
 		paths: {
-			"index": "/",
+			'index': '/',
 		},
 	},
 
@@ -70,12 +70,37 @@ module.exports = {
 		run: true,
 
 		// The URL browser sync should proxy
-		proxy: "https://dev.site.com",
+		proxy: 'https://dev.site.com',
 
 		// An array of additional paths to watch
 		// Starting a path with `!` will make it ignored
 		watch: [
-			"templates/**/*",
+			'templates/**/*',
+		],
+	},
+
+	fileSync: {
+		// NOTE: This requires rsync to be installed globally on your system.
+
+		// If set to false, file sync will not run
+		// (will not run in production)
+		run: true,
+
+		// Path to directory or file you want to sync from
+		source: './',
+
+		// Path to directory or file you want to sync to
+		target: 'remote:/target/path',
+
+		// Include directories or files that would otherwise have been excluded
+		include: [],
+
+		// An array of directories (paths) or files (paths or filenames) that
+		// you want to exclude from syncing
+		exclude: [
+			'.DS_store',
+			'vendor/',
+			'node_modules/',
 		],
 	},
 };

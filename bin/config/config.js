@@ -17,16 +17,23 @@ module.exports = {
 
 	critical: {
 		run: false,
-		baseUrl: "",
-		cssUrl: "",
-		output: "",
+		baseUrl: '',
+		cssUrl: '',
+		output: '',
 		paths: {},
 	},
 
 	browserSync: {
 		run: false,
-		proxy: "",
+		proxy: '',
 		watch: [],
+	},
+
+	fileSync: {
+		run: false,
+		source: '',
+		target: '',
+		exclude: [],
 	},
 
 	vue: {

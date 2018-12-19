@@ -35,6 +35,11 @@ class GUI {
 			this._critical.name = "Critical";
 		}
 
+		if (config.fileSync.run) {
+			this._fileSync = clone(_default);
+			this._fileSync.name = "File Sync";
+		}
+
 		this.render();
 	}
 
@@ -51,6 +56,10 @@ class GUI {
 
 	get critical () {
 		return this._get("_critical");
+	}
+
+	get fileSync () {
+		return this._get("_fileSync");
 	}
 
 	_get (runner) {

@@ -23,6 +23,12 @@ async function run () {
 	else
 		reload = () => {};
 
+	// File Sync
+	// =========================================================================
+
+	if (config.fileSync.run && process.env.NODE_ENV !== 'production')
+		new (require('./build/fileSync'))(config.fileSync, gui.fileSync);
+
 	// Less
 	// =========================================================================
 
