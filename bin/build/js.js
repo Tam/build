@@ -209,7 +209,7 @@ class JS {
 	}
 
 	async _removeOld (filename) {
-		if (!filename)
+		if (!filename || typeof filename !== 'string')
 			return Promise.resolve();
 
 		filename = filename.replace(/\[[^\[]+]/g, '*') + '?(.map)';
