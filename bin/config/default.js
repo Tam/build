@@ -26,7 +26,9 @@ module.exports = {
 
 		// An array of entry JS file paths
 		// See https://webpack.js.org/configuration/entry-context/#entry for
-		// supported entries
+		// supported entries.
+		// JS Supports Flow
+		// Also supports Typescript (.ts) files automatically!
 		entry: {
 			app: './assets/js/app.js',
 		},
