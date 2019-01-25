@@ -79,6 +79,42 @@ class JS {
 						exclude: /(node_modules)/,
 					},
 
+					{
+						test: /\.(ts)$/,
+						enforce: 'pre',
+						use: {
+							loader: require.resolve('eslint-loader'),
+							options: {
+								parser: require.resolve('@typescript-eslint/parser'),
+								plugins: [
+									// require.resolve('@typescript-eslint/eslint-plugin'),
+									'@typescript-eslint',
+								],
+								eslintPath: require.resolve("eslint"),
+								baseConfig: {
+									parserOptions: {
+										ecmaVersion: 7,
+										sourceType: "module"
+									},
+									extends: "eslint:recommended",
+									parser: "babel-eslint",
+									rules: {
+										eqeqeq: [1, "smart"],
+										semi: [1, "always"],
+										"no-loop-func": [2],
+										"no-unused-vars": [1],
+										"no-console": [1],
+										"no-mixed-spaces-and-tabs": [0],
+									},
+									env: {
+										browser: true,
+										es6: true,
+									},
+								},
+							},
+						},
+					},
+
 					// Babel
 					{
 						test: /\.(js)$/,
@@ -95,6 +131,42 @@ class JS {
 										},
 									],
 									require.resolve("@babel/preset-flow"),
+								],
+								plugins: [
+									[
+										require.resolve('@babel/plugin-transform-runtime'),
+										{
+											corejs: false,
+											helpers: true,
+											regenerator: true,
+											useESModules: false,
+										},
+									],
+									require.resolve("@babel/plugin-syntax-dynamic-import"),
+									require.resolve("@babel/plugin-proposal-class-properties"),
+								],
+								cacheDirectory: true,
+							},
+						},
+						include: this.config.entry.path,
+						exclude: /(node_modules)\/(?!(ether-[\w\d-_]+)\/).*/,
+					},
+
+					{
+						test: /\.(ts)$/,
+						use: {
+							loader: require.resolve("babel-loader"),
+							options: {
+								presets: [
+									[
+										require.resolve("@babel/preset-env"),
+										{
+											// useBuiltIns: 'usage',
+											useBuiltIns: false,
+											targets: '> 1%, last 2 versions, Firefox ESR, not dead, not ie <= 10',
+										},
+									],
+									require.resolve("@babel/preset-typescript"),
 								],
 								plugins: [
 									[

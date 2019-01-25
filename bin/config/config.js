@@ -29,13 +29,6 @@ module.exports = {
 		watch: [],
 	},
 
-	fileSync: {
-		run: false,
-		source: '',
-		target: '',
-		exclude: [],
-	},
-
 	vue: {
 		run: false,
 		entry: {},

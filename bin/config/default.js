@@ -78,29 +78,4 @@ module.exports = {
 			'templates/**/*',
 		],
 	},
-
-	fileSync: {
-		// NOTE: This requires rsync to be installed globally on your system.
-
-		// If set to false, file sync will not run
-		// (will not run in production)
-		run: true,
-
-		// Path to directory or file you want to sync from
-		source: './',
-
-		// Path to directory or file you want to sync to
-		target: 'remote:/target/path',
-
-		// Include directories or files that would otherwise have been excluded
-		include: [],
-
-		// An array of directories (paths) or files (paths or filenames) that
-		// you want to exclude from syncing
-		exclude: [
-			'.DS_store',
-			'vendor/',
-			'node_modules/',
-		],
-	},
 };
