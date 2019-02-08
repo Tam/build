@@ -45,7 +45,7 @@ module.exports = {
 
 		// Will be merged with the webpack config, allowing you to add, remove,
 		// or override any webpack config options.
-		config: {},
+		config: webpack => ({}),
 	},
 
 	critical: {

@@ -35,6 +35,11 @@ class JS {
 	}
 
 	webpack () {
+		let userConfig = this.config.config || {};
+
+		if (typeof userConfig === 'function')
+			userConfig = userConfig(webpack);
+
 		return webpack(merge.smart({
 			devtool: this.isProd ? "source-map" : "cheap-module-eval-source-map",
 
@@ -222,7 +227,7 @@ class JS {
 					'node_modules',
 				],
 			}
-		}, this.config.config || {}));
+		}, userConfig));
 	}
 
 	async callback (err, stats) {
