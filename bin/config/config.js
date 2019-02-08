@@ -13,6 +13,7 @@ module.exports = {
 		run: false,
 		entry: {},
 		output: {},
+		config: {},
 	},
 
 	critical: {

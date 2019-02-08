@@ -42,6 +42,10 @@ module.exports = {
 			filename: '[name].[hash:20].js',
 			chunkFilename: 'chunks/[name].[chunkhash].js',
 		},
+
+		// Will be merged with the webpack config, allowing you to add, remove,
+		// or override any webpack config options.
+		config: {},
 	},
 
 	critical: {

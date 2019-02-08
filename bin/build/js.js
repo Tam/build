@@ -3,7 +3,8 @@ const webpack = require("webpack")
 	, path = require("path")
 	, glob = require("glob")
 	, eslintFormatter = require("../helpers/eslintFormatter")
-	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin");
+	, BuildWebpackPlugin = require("../plugins/BuildWebpackPlugin")
+	, merge = require('webpack-merge');
 
 class JS {
 
@@ -34,7 +35,7 @@ class JS {
 	}
 
 	webpack () {
-		return webpack({
+		return webpack(merge.smart({
 			devtool: this.isProd ? "source-map" : "cheap-module-eval-source-map",
 
 			mode: process.env.NODE_ENV || "development",
@@ -221,7 +222,7 @@ class JS {
 					'node_modules',
 				],
 			}
-		});
+		}, this.config.config || {}));
 	}
 
 	async callback (err, stats) {

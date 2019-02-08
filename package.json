@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -40,6 +40,7 @@
     "pretty-hrtime": "^1.0.3",
     "text-table": "^0.2.0",
     "typescript": "^3.2.4",
-    "webpack": "^4.19.0"
+    "webpack": "^4.19.0",
+    "webpack-merge": "^4.2.1"
   }
 }
