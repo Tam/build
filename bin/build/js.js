@@ -62,9 +62,13 @@ class JS {
 								baseConfig: {
 									parserOptions: {
 										ecmaVersion: 7,
-										sourceType: "module"
+										sourceType: "module",
+										jsx: true,
 									},
-									extends: "eslint:recommended",
+									extends: [
+										"eslint:recommended",
+										"plugin:react/recommended",
+									],
 									parser: "babel-eslint",
 									rules: {
 										eqeqeq: [1, "smart"],
@@ -77,6 +81,11 @@ class JS {
 									env: {
 										browser: true,
 										es6: true,
+									},
+									settings: {
+										react: {
+											version: "detect",
+										},
 									},
 								},
 							},
@@ -150,6 +159,7 @@ class JS {
 									],
 									require.resolve("@babel/plugin-syntax-dynamic-import"),
 									require.resolve("@babel/plugin-proposal-class-properties"),
+									require.resolve("@babel/plugin-transform-react-jsx"),
 								],
 								cacheDirectory: true,
 							},
