@@ -52,7 +52,7 @@ class JS {
 				rules: [
 					// Linting
 					{
-						test: /\.(js)$/,
+						test: /\.jsx?$/,
 						enforce: 'pre',
 						use: {
 							loader: require.resolve('eslint-loader'),
@@ -132,7 +132,7 @@ class JS {
 
 					// Babel
 					{
-						test: /\.(js)$/,
+						test: /\.jsx?$/,
 						use: {
 							loader: require.resolve("babel-loader"),
 							options: {
@@ -236,6 +236,7 @@ class JS {
 					),
 					'node_modules',
 				],
+				extensions: ['.js', '.jsx', '.ts'],
 			}
 		}, userConfig));
 	}
