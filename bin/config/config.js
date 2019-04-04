@@ -14,6 +14,7 @@ module.exports = {
 		entry: {},
 		output: {},
 		config: {},
+		jsx: false,
 	},
 
 	critical: {
@@ -30,9 +31,9 @@ module.exports = {
 		watch: [],
 	},
 
-	vue: {
+	copy: {
 		run: false,
-		entry: {},
-		output: {},
-	},
+		basePath: '',
+		paths: {},
+	}
 };

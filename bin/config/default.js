@@ -43,6 +43,9 @@ module.exports = {
 			chunkFilename: 'chunks/[name].[chunkhash].js',
 		},
 
+		// If set to true, JSX will be supported
+		jsx: false,
+
 		// Will be merged with the webpack config, allowing you to add, remove,
 		// or override any webpack config options.
 		config: webpack => ({}),
@@ -83,5 +86,18 @@ module.exports = {
 		watch: [
 			'templates/**/*',
 		],
+	},
+
+	copy: {
+		// If false, copy will not run
+		run: false,
+
+		// The base path that the paths will be copied to
+		basePath: 'web',
+
+		// The paths to copy { [from]: [to] }
+		paths: {
+			'assets/fonts': 'assets/fonts',
+		},
 	},
 };

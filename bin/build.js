@@ -40,6 +40,12 @@ async function run () {
 
 	if (config.critical.run)
 		new (require("./build/critical"))(config.critical, gui.critical);
+
+	// Copy
+	// =========================================================================
+
+	if (config.copy.run)
+		new (require('./build/copy'))(config.copy, gui.copy);
 }
 
 try {

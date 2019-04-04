@@ -51,7 +51,7 @@ class JS {
 			module: {
 				rules: [
 					// Linting
-					{
+					this.config.jsx ? {
 						test: /\.jsx?$/,
 						enforce: 'pre',
 						use: {
@@ -92,7 +92,7 @@ class JS {
 						},
 						include: this.config.entry.path,
 						exclude: /(node_modules)/,
-					},
+					} : {},
 
 					{
 						test: /\.(ts)$/,
@@ -131,7 +131,7 @@ class JS {
 					},
 
 					// Babel
-					{
+					this.config.jsx ? {
 						test: /\.jsx?$/,
 						use: {
 							loader: require.resolve("babel-loader"),
@@ -166,7 +166,7 @@ class JS {
 						},
 						include: this.config.entry.path,
 						exclude: /(node_modules)\/(?!(ether-[\w\d-_]+)\/).*/,
-					},
+					} : {},
 
 					{
 						test: /\.(ts)$/,

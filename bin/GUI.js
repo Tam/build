@@ -35,6 +35,11 @@ class GUI {
 			this._critical.name = "Critical";
 		}
 
+		if (config.copy.run) {
+			this._copy = clone(_default);
+			this._copy.name = "Copy";
+		}
+
 		this.render();
 	}
 
@@ -51,6 +56,10 @@ class GUI {
 
 	get critical () {
 		return this._get("_critical");
+	}
+
+	get copy () {
+		return this._get("_copy");
 	}
 
 	_get (runner) {
