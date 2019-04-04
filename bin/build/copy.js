@@ -15,8 +15,14 @@ class Copy {
 			to: path.join(config.basePath, to),
 		}));
 
-		this.startWatchers();
-		this.paths.forEach(path => this.run(path));
+		return new Promise(async resolve => {
+			if (process.env.NODE_ENV !== "production")
+				this.startWatchers();
+
+			await this.paths.forEach(path => this.run(path));
+
+			resolve();
+		});
 	}
 
 	// Actions
@@ -34,15 +40,18 @@ class Copy {
 	}
 
 	async run ({ from, to }) {
-		this._run();
+		return new Promise(async resolve => {
+			this._run();
 
-		await new Promise(resolve => {
-			rimraf(to, resolve);
-		});
+			await new Promise(resolve => {
+				rimraf(to, resolve);
+			});
 
-		ncp(from, to, { dereference: true }, err => {
-			err && (err + '').indexOf('EEXIST') === -1 && this.gui.error(err);
-			this._complete();
+			ncp(from, to, { dereference: true }, err => {
+				err && (err + '').indexOf('EEXIST') === -1 && this.gui.error(err);
+				this._complete();
+				resolve();
+			});
 		});
 	}
 

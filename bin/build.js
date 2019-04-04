@@ -35,17 +35,17 @@ async function run () {
 	if (config.js.run)
 		await new (require("./build/js"))(config.js, gui.js, reload, manifest);
 
-	// Critical
-	// =========================================================================
-
-	if (config.critical.run)
-		new (require("./build/critical"))(config.critical, gui.critical);
-
 	// Copy
 	// =========================================================================
 
 	if (config.copy.run)
-		new (require('./build/copy'))(config.copy, gui.copy);
+		await new (require('./build/copy'))(config.copy, gui.copy);
+
+	// Critical (Always Last)
+	// =========================================================================
+
+	if (config.critical.run)
+		new (require("./build/critical"))(config.critical, gui.critical);
 }
 
 try {
