@@ -46,8 +46,8 @@ class Less {
 		return new Promise(async resolve => {
 			if (process.env.NODE_ENV !== "production")
 				await this.startWatchers();
-			else
-				await this.entries.forEach(this.render.bind(this));
+
+			await this.entries.forEach(this.render.bind(this));
 
 			resolve();
 		});
