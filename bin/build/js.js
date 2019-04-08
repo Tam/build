@@ -51,8 +51,45 @@ class JS {
 			module: {
 				rules: [
 					// Linting
+					{
+						test: /\.js$/,
+						enforce: 'pre',
+						use: {
+							loader: require.resolve('eslint-loader'),
+							options: {
+								formatter: eslintFormatter,
+								eslintPath: require.resolve("eslint"),
+								baseConfig: {
+									parserOptions: {
+										ecmaVersion: 7,
+										sourceType: "module",
+										jsx: true,
+									},
+									extends: [
+										"eslint:recommended",
+									],
+									parser: "babel-eslint",
+									rules: {
+										eqeqeq: [1, "smart"],
+										semi: [1, "always"],
+										"no-loop-func": [2],
+										"no-unused-vars": [1],
+										"no-console": [1],
+										"no-mixed-spaces-and-tabs": [0],
+									},
+									env: {
+										browser: true,
+										es6: true,
+									},
+								},
+							},
+						},
+						include: this.config.entry.path,
+						exclude: /(node_modules)/,
+					},
+
 					this.config.jsx ? {
-						test: /\.jsx?$/,
+						test: /\.jsx$/,
 						enforce: 'pre',
 						use: {
 							loader: require.resolve('eslint-loader'),
@@ -131,8 +168,44 @@ class JS {
 					},
 
 					// Babel
+					{
+						test: /\.js$/,
+						use: {
+							loader: require.resolve("babel-loader"),
+							options: {
+								presets: [
+									[
+										require.resolve("@babel/preset-env"),
+										{
+											// useBuiltIns: 'usage',
+											useBuiltIns: false,
+											targets: '> 1%, last 2 versions, Firefox ESR, not dead, not ie <= 10',
+										},
+									],
+									require.resolve("@babel/preset-flow"),
+								],
+								plugins: [
+									[
+										require.resolve('@babel/plugin-transform-runtime'),
+										{
+											corejs: false,
+											helpers: true,
+											regenerator: true,
+											useESModules: false,
+										},
+									],
+									require.resolve("@babel/plugin-syntax-dynamic-import"),
+									require.resolve("@babel/plugin-proposal-class-properties"),
+								],
+								cacheDirectory: true,
+							},
+						},
+						include: this.config.entry.path,
+						exclude: /(node_modules)\/(?!(ether-[\w\d-_]+)\/).*/,
+					},
+
 					this.config.jsx ? {
-						test: /\.jsx?$/,
+						test: /\.jsx$/,
 						use: {
 							loader: require.resolve("babel-loader"),
 							options: {
