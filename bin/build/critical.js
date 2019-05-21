@@ -76,7 +76,11 @@ class Critical {
 				);
 			}
 
-			css += await this.get(url);
+			try {
+				css += await this.get(url);
+			} catch (e) {
+				this.gui.error(e);
+			}
 		}
 
 		return css;
