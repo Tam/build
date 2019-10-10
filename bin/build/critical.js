@@ -148,6 +148,8 @@ class Critical {
 			timeout: 60e3,
 			width: 1300,
 			height: 1500,
+			forceInclude: this.config.forceInclude,
+			forceExclude: this.config.forceExclude,
 		});
 
 		// Write the CSS to our output dir
