@@ -8,6 +8,13 @@ module.exports = {
 		output: [],
 	},
 
+	// SASS
+	sass: {
+		run: false,
+		entry: [],
+		output: [],
+	},
+
 	// JS
 	js: {
 		run: false,

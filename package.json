@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -37,6 +37,7 @@
     "inquirer": "^6.2.0",
     "less": "^3.8.1",
     "ncp": "^2.0.0",
+    "node-sass": "^4.13.0",
     "penthouse": "^1.8.2",
     "postcss": "^7.0.2",
     "postcss-custom-properties": "^8.0.3",

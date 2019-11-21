@@ -1,12 +1,12 @@
-const less = require("less")
-	, postCss = require("postcss")
-	, fs = require("fs")
-	, path = require("path")
-	, chokidar = require("chokidar")
-	, crypto = require("crypto")
-	, ensureDirectoryExists = require("../helpers/ensureDirectoryExists");
+const path = require('path')
+	, fs = require('fs')
+	, postCss = require('postcss')
+	, chokidar = require('chokidar')
+	, sass = require('node-sass')
+	, crypto = require('crypto')
+	, ensureDirectoryExists = require('../helpers/ensureDirectoryExists');
 
-class Less {
+class Sass {
 
 	constructor (config, gui, reload, manifest) {
 		this.gui = gui;
@@ -14,40 +14,38 @@ class Less {
 		this.manifest = manifest;
 		this.running = 0;
 
-		this.entries = config.entry.map((entry, i) => {
-			return {
-				path: entry,
-				name: path.basename(entry),
-				dir: path.dirname(entry),
-				output: config.output[i],
-			};
-		});
+		this.entries = config.entry.map((entry, i) => ({
+			path: entry,
+			name: path.basename(entry),
+			dir: path.dirname(entry),
+			output: config.output[i],
+		}));
 
 		this.postCssProcessor = postCss([
-			require("postcss-custom-properties")({ preserve: true }),
-			require("autoprefixer")({
+			require('postcss-custom-properties')({ preserve: true }),
+			require('autoprefixer')({
 				overrideBrowserslist: [
-					">1%",
-					"last 2 versions",
-					"Firefox ESR",
-					"not dead",
+					'>1%',
+					'last 2 versions',
+					'Firefox ESR',
+					'not dead',
 					'not ie <= 10',
 				],
-				flexbox: "no-2009",
+				flexbox: 'no-2009',
 				grid: true,
 			}),
-			require("cssnano")({
-				preset: ["advanced", {
+			require('cssnano')({
+				preset: ['advanced', {
 					zindex: false,
-				}]
+				}],
 			}),
 		]);
 
 		return new Promise(async resolve => {
-			if (process.env.NODE_ENV !== "production")
+			if (process.env.NODE_ENV !== 'production')
 				await this.startWatchers();
-
-			await this.entries.forEach(this.render.bind(this));
+			else
+				await this.entries.forEach(this.render.bind(this));
 
 			resolve();
 		});
@@ -63,17 +61,17 @@ class Less {
 			const entry = this.entries[i];
 
 			try {
-				const { imports } = await this._renderLess(entry);
+				const { imports } = await this.render(entry);
 
 				const watcher = chokidar.watch(
-					[entry.path, ...imports],
+					imports, // sass includes the entry file in its imports
 					{
 						ignoreInitial:          true,
 						ignorePermissionErrors: true,
 					}
 				);
 
-				watcher.on("all", this.render.bind(this, entry));
+				watcher.on('all', this.render.bind(this, entry));
 
 				this.watchers[entry.path] = { watcher, imports };
 			} catch (e) {
@@ -85,9 +83,12 @@ class Less {
 	async render (entry) {
 		this._run();
 
+		let _imports = [];
+
 		try {
-			// Compile Less
-			let { css, map, imports } = await this._renderLess(entry);
+			// Compile Sass
+			let { css, map, imports } = await this._renderSass(entry);
+			_imports = imports;
 
 			// Update watcher
 			if (this.watchers !== void 0)
@@ -95,15 +96,12 @@ class Less {
 
 			// Skip if empty
 			if (css === null) {
-				this.gui.message("Less is empty, nothing compiled!");
+				this.gui.message('SASS is empty, nothing compiled!');
 				this._complete();
-				return;
+				return { imports };
 			}
 
-			// Fix source map paths
-			map = JSON.parse(map);
-			map.sources = map.sources.map(s => s.replace(entry.dir + "/", ""));
-			map = JSON.stringify(map);
+			// TODO: Fix sourcemap paths?
 
 			// Hash filename
 			const output = this._hashFilename(entry.output, css);
@@ -124,11 +122,11 @@ class Less {
 			// Write CSS
 			fs.writeFileSync(
 				output,
-				compiled.css + `\r\n/*# sourceMappingURL=${path.basename(output)}.map */`
+				compiled.css
 			);
 
 			// Write Map
-			fs.writeFileSync(output + ".map", compiled.map);
+			fs.writeFileSync(output + '.map', compiled.map);
 
 			// Update manifest
 			this.manifest(entry.name, path.basename(output));
@@ -140,6 +138,7 @@ class Less {
 		}
 
 		this._complete();
+		return { imports: _imports };
 	}
 
 	// Helpers
@@ -159,26 +158,27 @@ class Less {
 			this.gui.complete();
 	}
 
-	_renderLess (entry) {
+	async _renderSass (entry) {
 		return new Promise(((resolve, reject) => {
-			const css = fs.readFileSync(entry.path, "utf8");
+			sass.render({
+				file: entry.path,
+			}, (error, result) => {
+				if (error)
+					return reject(error);
 
-			if (css.trim() === "")
-				resolve({ css: null, map: null });
-
-			less.render(css, {
-				filename: entry.name,
-				paths: [entry.dir],
-				relativeUrls: false,
-				sourceMap: {},
-			}, (err, out) => {
-				if (err) reject(err);
-				else resolve(out);
+				resolve({
+					css: result.css.toString(),
+					map: JSON.stringify(result.map),
+					imports: result.stats.includedFiles,
+				});
 			});
 		}));
 	}
 
 	_updateWatcher (entry, imports) {
+		if (!this.watchers[entry.path])
+			return;
+
 		const { watcher, imports: oldImports } = this.watchers[entry.path];
 
 		const added   = imports.filter(p => !oldImports.includes(p));
@@ -196,8 +196,8 @@ class Less {
 		const h = hash[0]
 			, l = +hash[1];
 
-		const hasher = crypto.createHash("sha1");
-		hasher.setEncoding("hex");
+		const hasher = crypto.createHash('sha1');
+		hasher.setEncoding('hex');
 		hasher.write(fileContents);
 		hasher.end();
 		let hashString = hasher.read().substr(0, l);
@@ -205,7 +205,7 @@ class Less {
 		return filename.replace(h, hashString);
 	}
 
-	_removeOld (entry) {
+	async _removeOld (entry) {
 		return new Promise(resolve => {
 			const name = path.basename(entry.output)
 				, dir  = path.dirname(entry.output);
@@ -235,4 +235,4 @@ class Less {
 
 }
 
-module.exports = Less;
+module.exports = Sass;

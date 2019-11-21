@@ -20,6 +20,23 @@ module.exports = {
 		],
 	},
 
+	sass: {
+		// If set to false, Less compilation will not run
+		run: false,
+
+		// An array of entry SASS file paths. Must be strings.
+		entry: [
+			'assets/scss/style.scss',
+		],
+
+		// An array of output CSS file paths. Must match the entry paths.
+		// Output names can contain: "[hash:20]": a random hash (with a given
+		// length)
+		output: [
+			'web/assets/css/style.[hash:20].css',
+		],
+	},
+
 	js: {
 		// If set to false, JS compilation will not run
 		run: true,

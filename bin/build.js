@@ -29,6 +29,12 @@ async function run () {
 	if (config.less.run)
 		await new (require("./build/less"))(config.less, gui.less, reload, manifest);
 
+	// SASS
+	// =========================================================================
+
+	if (config.sass.run)
+		await new (require("./build/sass"))(config.sass, gui.sass, reload, manifest);
+
 	// JS
 	// =========================================================================
 

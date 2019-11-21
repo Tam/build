@@ -25,6 +25,11 @@ class GUI {
 			this._less.name = "Less";
 		}
 
+		if (config.sass.run) {
+			this._sass = clone(_default);
+			this._sass.name = "SASS";
+		}
+
 		if (config.js.run) {
 			this._js = clone(_default);
 			this._js.name = "JS";
@@ -48,6 +53,10 @@ class GUI {
 
 	get less () {
 		return this._get("_less");
+	}
+
+	get sass () {
+		return this._get("_sass");
 	}
 
 	get js () {
