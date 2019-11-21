@@ -88,6 +88,12 @@ module.exports = {
 		paths: {
 			'index': '/',
 		},
+		
+		// An array of CSS selectors (can be regexes) to include in critical, even if not in the viewport
+		forceInclude: [],
+		
+		// An array of CSS selectors (can be regexes) to exclude in critical, even if in the viewport
+		forceExclude: [],
 	},
 
 	browserSync: {

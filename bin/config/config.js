@@ -30,6 +30,8 @@ module.exports = {
 		cssUrl: '',
 		output: '',
 		paths: {},
+		forceInclude: [],
+		forceExclude: [],
 	},
 
 	browserSync: {
