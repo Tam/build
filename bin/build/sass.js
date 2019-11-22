@@ -91,7 +91,7 @@ class Sass {
 			_imports = imports;
 
 			// Update watcher
-			if (this.watchers !== void 0)
+			if (this.watchers !== void 0 && imports.length)
 				this._updateWatcher(entry, imports);
 
 			// Skip if empty
@@ -100,8 +100,6 @@ class Sass {
 				this._complete();
 				return { imports };
 			}
-
-			// TODO: Fix sourcemap paths?
 
 			// Hash filename
 			const output = this._hashFilename(entry.output, css);
