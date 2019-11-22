@@ -13,6 +13,7 @@ class Critical {
 	constructor (config, gui) {
 		this.gui = gui;
 		this.config = config;
+		this.cssCache = {};
 
 		gui.run();
 
@@ -31,13 +32,10 @@ class Critical {
 		// Ensure output dir exists
 		ensureDirectoryExists(this.config.output);
 
-		// Get the css
-		this.css = await this.getCss();
-
 		// Convert our template => url object into an array
 		this.urls = Object.keys(this.config.paths).map(template => ({
 			template,
-			url: path.join(this.config.baseUrl, this.config.paths[template]),
+			url: `${this.config.baseUrl}/${this.config.paths[template]}`.replace('//', '/').replace(':/', '://'),
 		}));
 
 		// Run penthouse in parallel
@@ -56,28 +54,35 @@ class Critical {
 		this.gui.complete();
 	}
 
-	async getCss () {
+	async getCss (targetMarkup) {
 		let css = "",
 			urls = this.config.cssUrl;
 
 		if (!Array.isArray(urls))
 			urls = [urls];
 
-		const regex = /\[([\w\d.]+)]/g;
+		const regex = /\[([\w\d-_.]+)]/g;
 
 		for (let i = 0, l = urls.length; i < l; ++i) {
 			let url = urls[i];
 
 			// Replace tokens w/ values from manifest
-			if (url.indexOf("[") > -1) {
+			if (url.indexOf('[') > -1) {
 				url = url.replace(
 					regex,
 					(_, key) => Manifest.read(key)
 				);
 			}
 
+			// Skip if the url doesn't appear in the target markup
+			if (targetMarkup.indexOf(url) === -1)
+				continue;
+
 			try {
-				css += await this.get(url);
+				if (!this.cssCache.hasOwnProperty(url))
+					this.cssCache[url] = await this.get(url);
+
+				css += this.cssCache[url];
 			} catch (e) {
 				this.gui.error(e);
 			}
@@ -86,16 +91,22 @@ class Critical {
 		return css;
 	}
 
-	get (url) {
+	get (url, isCss = true) {
 		return new Promise ((resolve, reject) => {
 			const req = (~url.indexOf("https:") ? https : http).get(url);
 
 			req.on('response', res => {
+				if (res.statusCode < 200 || res.statusCode >= 400)
+					return reject(res.statusCode);
+
 				let body = '';
 				res.on('data', function(chunk) {
 					body += chunk;
 				});
 				res.on('end', function() {
+					if (!isCss)
+						return resolve(body);
+
 					// Normalize relative URLs
 					const dir = url.substring(0, url.lastIndexOf('/')) + "/"
 						, regex = /url\(\s*['"]?\/?(.+?)['"]?\s*\)/ig;
@@ -139,24 +150,33 @@ class Critical {
 
 		const { url, template } = u;
 
-		this.gui.message(chalk.grey("Starting ") + template);
+		this.gui.message(chalk.grey("Starting ") + `${template}`);
 
-		// Generate the critical CSS
-		const css = await penthouse({
-			url,
-			cssString: this.css,
-			timeout: 60e3,
-			width: 1300,
-			height: 1500,
-			forceInclude: this.config.forceInclude,
-			forceExclude: this.config.forceExclude,
-		});
+		try {
+			// Get CSS String
+			const targetMarkup = await this.get(url, false);
+			const cssString = await this.getCss(targetMarkup);
 
-		// Write the CSS to our output dir
-		fs.writeFileSync(
-			path.join(this.config.output, template + ".css"),
-			css
-		);
+			// Generate the critical CSS
+			const css = await penthouse({
+				url,
+				cssString,
+				timeout: 60e3,
+				width: 1300,
+				height: 1500,
+				forceInclude: this.config.forceInclude,
+				forceExclude: this.config.forceExclude,
+			});
+
+			// Write the CSS to our output dir
+			fs.writeFileSync(
+				path.join(this.config.output, template + ".css"),
+				css
+			);
+		} catch (e) {
+			this.gui.message(chalk.red('Failed ') + `${template} - ${chalk.redBright(e)}\n${url}`);
+			return this.startNewJob();
+		}
 
 		this.gui.message(chalk.grey("Finished ") + template);
 
