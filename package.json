@@ -6,6 +6,11 @@
   "license": "MIT",
   "repository": "https://github.com/tam/build",
   "bin": {
-    "build": "bin/index.js"
+    "build": "bin/build.js"
   },
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "deepmerge": "^4.2.2",
+    "inquirer": "^7.0.1"
+  }
 }
