@@ -11,6 +11,9 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "deepmerge": "^4.2.2",
-    "inquirer": "^7.0.1"
+    "inquirer": "^7.0.1",
+    "pretty-hrtime": "^1.0.3",
+    "signal-exit": "^3.0.2",
+    "text-table": "^0.2.0"
   }
 }
