@@ -4,7 +4,7 @@ An opinionated build system for front-end web development.
 Currently supports:
 - Sass
 - Less
-- ES6 JS / JSX (WIP)
+- ES6 JS / JSX
 - TypeScript / TSX (WIP)
 - JSON Manifest (NOT webmanifest)
 - Critical CSS (WIP)
