@@ -56,4 +56,5 @@ For more advanced configuration that use include Node JS you'll want to use the
 - [x] Merge config from `package.json` into `build.config.js` when creating it
 - [ ] Add CLI flags for temporary overrides (i.e. prod build without critical `--no-crit`)
 - [ ] Support `critical.cssUrl` being both absolute and relative to `critical.baseUrl`
-- [ ] Add an option in JS for TypeScript support (similar to the jsx option)
+- [ ] Watch package.json or build.config.js for changes and update everything accordingly
+- [ ] Support scrolling through log
