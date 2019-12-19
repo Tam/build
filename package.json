@@ -16,6 +16,7 @@
     "cssnano-preset-advanced": "^4.0.7",
     "deepmerge": "^4.2.2",
     "inquirer": "^7.0.1",
+    "less": "^3.10.3",
     "postcss": "^7.0.25",
     "postcss-custom-properties": "^9.0.2",
     "pretty-hrtime": "^1.0.3",

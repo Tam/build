@@ -1,5 +1,13 @@
 # build
-An opinionated build system for front-end web development
+An opinionated build system for front-end web development.
+
+Currently supports:
+- Sass
+- Less
+- ES6 JS / JSX (WIP)
+- TypeScript / TSX (WIP)
+- Manifest
+- Critical CSS (WIP)
 
 ## Installation
 
@@ -43,8 +51,8 @@ For more advanced configuration that use include Node JS you'll want to use the
 ## TODO
 - [ ] Write install / usage / config docs
 - [ ] Remove BrowserSync (or replace it with something simpler)?
-- [ ] Allow config options to be set in `package.json`
-- [ ] Merge config from `package.json` into `build.config.js` when creating it
+- [x] Allow config options to be set in `package.json`
+- [x] Merge config from `package.json` into `build.config.js` when creating it
 - [ ] Add CLI flags for temporary overrides (i.e. prod build without critical `--no-crit`)
 - [ ] Support `critical.cssUrl` being both absolute and relative to `critical.baseUrl`
 - [ ] Add an option in JS for TypeScript support (similar to the jsx option)
