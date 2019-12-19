@@ -6,8 +6,9 @@ Currently supports:
 - Less
 - ES6 JS / JSX (WIP)
 - TypeScript / TSX (WIP)
-- Manifest
+- JSON Manifest (NOT webmanifest)
 - Critical CSS (WIP)
+- File copy sync (WIP)
 
 ## Installation
 

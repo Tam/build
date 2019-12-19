@@ -17,7 +17,7 @@ const onExit = require('signal-exit');
 		case 'once':
 		case 'prod':
 		case 'p':
-			process.env.NODE_ENV = 'PRODUCTION';
+			process.env.NODE_ENV = 'production';
 			require('../lib/build');
 			return;
 		default:
