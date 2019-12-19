@@ -9,10 +9,17 @@
     "build": "bin/build.js"
   },
   "dependencies": {
+    "autoprefixer": "^9.7.3",
     "chalk": "^3.0.0",
+    "chokidar": "^3.3.1",
+    "cssnano": "^4.1.10",
+    "cssnano-preset-advanced": "^4.0.7",
     "deepmerge": "^4.2.2",
     "inquirer": "^7.0.1",
+    "postcss": "^7.0.25",
+    "postcss-custom-properties": "^9.0.2",
     "pretty-hrtime": "^1.0.3",
+    "sass": "^1.23.7",
     "signal-exit": "^3.0.2",
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0"
