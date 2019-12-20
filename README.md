@@ -46,7 +46,7 @@ There are two ways to configure build (should you need to). The first is in your
 You can configure build in your `package.json` by adding a `build` property 
 that maps to an object of your settings.
 
-For more advanced configuration that use include Node JS you'll want to use the
+For more advanced configuration that can use Node JS you'll want to use the
 `build.config.js` file. Run the `build init` command to generate this file.
 
 ## Navigation
