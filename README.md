@@ -66,7 +66,7 @@ You can navigate up and down the message log using the following keys:
 - [x] Allow config options to be set in `package.json`
 - [x] Merge config from `package.json` into `build.config.js` when creating it
 - [ ] Add CLI flags for temporary overrides (i.e. prod build without critical `--no-crit`)
-- [ ] Support `critical.cssUrl` being both absolute and relative to `critical.baseUrl`
+- [x] Support `critical.cssUrl` being both absolute and relative to `critical.baseUrl`
 - [ ] Watch package.json or build.config.js for changes and update everything accordingly
 - [x] Support scrolling through log
 - [ ] `build init` should have to option to create `build.config.js` or add `build` to `package.json` with defaults
