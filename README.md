@@ -49,6 +49,15 @@ that maps to an object of your settings.
 For more advanced configuration that use include Node JS you'll want to use the
 `build.config.js` file. Run the `build init` command to generate this file.
 
+## Navigation
+
+You can navigate up and down the message log using the following keys:
+
+- `Shift + ]` - Jump up 5 lines
+- `Shift + [` - Jump down 5 lines
+- `[Up arrow]` or `k` - Jump up 1 line
+- `[Down arrow]` or `j` - Jump down 1 line
+
 ## TODO
 - [ ] Write install / usage / config docs
 - [ ] Remove BrowserSync (or replace it with something simpler)?
