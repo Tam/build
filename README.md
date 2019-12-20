@@ -5,10 +5,10 @@ Currently supports:
 - Sass
 - Less
 - ES6 JS / JSX
-- TypeScript / TSX (WIP)
 - JSON Manifest (NOT webmanifest)
-- Critical CSS (WIP)
-- File copy sync (WIP)
+- Critical CSS
+- File copy sync
+- TypeScript / TSX (Coming soon™)
 
 ## Installation
 
@@ -49,6 +49,8 @@ that maps to an object of your settings.
 For more advanced configuration that can use Node JS you'll want to use the
 `build.config.js` file. Run the `build init` command to generate this file.
 
+**[Available Config Options](./lib/config/default.js)**
+
 ## Navigation
 
 You can navigate up and down the message log using the following keys:
@@ -61,7 +63,7 @@ You can navigate up and down the message log using the following keys:
 ---
 
 ## TODO
-- [ ] Write install / usage / config docs
+- [x] Write install / usage / config docs
 - [ ] Remove BrowserSync (or replace it with something simpler)?
 - [x] Allow config options to be set in `package.json`
 - [x] Merge config from `package.json` into `build.config.js` when creating it
