@@ -58,6 +58,8 @@ You can navigate up and down the message log using the following keys:
 - `[Up arrow]` or `k` - Jump up 1 line
 - `[Down arrow]` or `j` - Jump down 1 line
 
+---
+
 ## TODO
 - [ ] Write install / usage / config docs
 - [ ] Remove BrowserSync (or replace it with something simpler)?
