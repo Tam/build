@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "4.0.3.1",
+  "version": "4.0.5",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -16,6 +16,7 @@
     "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/preset-env": "^7.7.7",
     "@babel/runtime": "^7.7.7",
+    "@shopify/themekit": "^1.1.3",
     "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -42,6 +43,7 @@
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0",
     "webpack": "^4.41.4",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^4.2.2",
+    "wrap-ansi": "^6.2.0"
   }
 }
