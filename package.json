@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "An opinionated build system for front-end web development",
   "author": "Tam <hi@tam.sx>",
   "license": "MIT",
@@ -28,6 +28,7 @@
     "deepmerge": "^4.2.2",
     "eslint": "^6.7.2",
     "eslint-loader": "^3.0.3",
+    "eslint-plugin-react": "^7.18.3",
     "glob": "^7.1.6",
     "inquirer": "^7.0.1",
     "less": "^3.10.3",
