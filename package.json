@@ -34,7 +34,7 @@
     "less": "^3.10.3",
     "ncp": "^2.0.0",
     "penthouse": "^2.2.2",
-    "postcss": "^7.0.25",
+    "postcss": "^8.2.10",
     "postcss-custom-properties": "^9.0.2",
     "pretty-hrtime": "^1.0.3",
     "rimraf": "^3.0.0",
