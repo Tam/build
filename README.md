@@ -3,12 +3,12 @@ An opinionated build system for front-end web development.
 
 Currently supports:
 - Sass
+  - Supports `glob` imports (i.e. `@import "glob:../../templates/**/*.scss";`)
 - Less
 - ES6 JS / JSX
 - JSON Manifest (NOT webmanifest)
 - Critical CSS
 - File copy sync
-- TypeScript / TSX (Coming soon™)
 
 ## Installation
 
